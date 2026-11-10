@@ -1,19 +1,36 @@
 ---
 import { site } from '../content/site';
+const h = site.sections.process;
+// Each step's mini visual: a first commit, a second, milestone bars, then live.
+const kinds = ['day', 'week', 'bars', 'live'] as const;
 ---
 <section id="how-we-work" class="section process" aria-labelledby="process-title">
-  <div class="container process__inner">
-    <div class="process__intro">
-      <p class="eyebrow">{site.sections.process.eyebrow}</p>
-      <h2 id="process-title">{site.sections.process.title} <span class="opal-text">{site.sections.process.highlight}</span></h2>
-      <p class="process__note">{site.process.note}</p>
-    </div>
+  <div class="container">
+    <p class="eyebrow">{h.eyebrow}</p>
+    <h2 id="process-title">{h.title} <span class="opal-text">{h.highlight}</span></h2>
+    <p class="process__note">{site.process.note}</p>
+
     <ol class="process__steps" role="list" data-commit-line>
       {site.process.steps.map((step, i) => (
         <li class="process__step">
-          <span class="process__index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <h3>{step.title}</h3>
-          <p>{step.body}</p>
+          <span class="process__node" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <div class="process__panel">
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+            <div class={`process__mini process__mini--${kinds[i]}`} aria-hidden="true">
+              {kinds[i] === 'bars' ? (
+                <span class="mini-bars"><i></i><i></i><i></i><i></i><i></i></span>
+              ) : (
+                <>
+                  <span class="mini-mark">{step.mark}</span>
+                  <span class="mini-line">
+                    {kinds[i] === 'week' && <i class="mini-dot mini-dot--early"></i>}
+                    <i class="mini-dot"></i>
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
         </li>
       ))}
     </ol>
@@ -23,42 +40,76 @@ import { site } from '../content/site';
 <script>
   import { initCommitLine } from '../motion/commitLine';
   const list = document.querySelector<HTMLOListElement>('[data-commit-line]');
-  if (list) initCommitLine(list);
+  const wide = window.matchMedia('(min-width: 48rem)');
+  if (list) initCommitLine(list, () => (wide.matches ? 'x' : 'y'));
 </script>
 
 <style>
   .process { background: var(--bg-soft); }
-  .process__inner { display: grid; gap: var(--space-7); }
   .process__note { margin: var(--space-4) 0 0; color: var(--muted); max-width: var(--measure-text); }
 
-  /* The commit graph: a faint rail, a drawn line scaled by --progress, and a dot per step. */
+  /* The rail: a faint track, and the mosaic drawn over it up to --progress. Phones: vertical. */
   .process__steps {
-    --progress: 1; /* no-JS default: the line is complete */
-    --rail-x: var(--space-2);
-    position: relative; margin: 0; padding: 0 0 0 var(--space-7); list-style: none;
-    display: grid; gap: var(--space-7);
+    --progress: 1; /* no-JS default: the rail is complete */
+    position: relative; margin: var(--space-7) 0 0; padding: 0 0 0 calc(var(--node-size) + var(--space-5));
+    list-style: none; display: grid; gap: var(--space-6);
   }
   .process__steps::before, .process__steps::after {
-    content: ''; position: absolute; left: var(--rail-x); top: var(--space-2); bottom: var(--space-2);
-    width: var(--focus-w); border-radius: var(--focus-w);
+    content: ''; position: absolute; left: calc(var(--node-size) / 2 - var(--rail-w) / 2);
+    top: calc(var(--node-size) / 2); bottom: calc(var(--node-size) / 2); width: var(--rail-w); border-radius: var(--rail-w);
   }
   .process__steps::before { background: var(--border); }
   .process__steps::after {
-    background: var(--opal-deep); transform-origin: top; transform: scaleY(var(--progress));
+    background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-border) auto;
+    transform-origin: top; transform: scaleY(var(--progress));
+    transition: transform var(--dur-1) var(--ease-out);
   }
-  .process__step { position: relative; display: grid; gap: var(--space-2); }
-  .process__step::before {
-    content: ''; position: absolute; left: calc(-1 * var(--space-7) + var(--rail-x) - var(--space-2) + var(--border-w));
-    top: var(--space-1); width: var(--space-4); height: var(--space-4); border-radius: var(--radius-round);
-    background: var(--bg-soft); border: var(--focus-w) solid var(--border); z-index: 1;
-    transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  .process__step { position: relative; }
+  .process__node {
+    position: absolute; z-index: 1; left: calc(-1 * (var(--node-size) + var(--space-5))); top: 0;
+    width: var(--node-size); height: var(--node-size); border-radius: var(--radius-round);
+    display: grid; place-items: center; font-family: var(--font-mono); font-size: var(--fs-label);
+    background: var(--bg-soft); color: var(--text); border: var(--focus-w) solid var(--control-border);
+    box-shadow: 0 0 0 var(--space-1) var(--bg-soft);
+    transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
   }
-  .process__step[data-reached='true']::before { background: var(--focus); border-color: var(--focus); }
-  .process__index { font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label); color: var(--muted); }
-  .process__step p { margin: 0; color: var(--muted); max-width: var(--measure-text); }
+  .process__step[data-reached='true'] .process__node { background: var(--node-on); color: var(--white); border-color: var(--node-on); }
+
+  .process__panel {
+    background: var(--surface); border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+    padding: var(--space-5); display: grid; gap: var(--space-2);
+  }
+  .process__panel p { margin: 0; color: var(--muted); }
+
+  /* Mini visuals: decorative; milestone bars fill with the mosaic once their step is reached. */
+  .process__mini { position: relative; height: var(--space-7); margin-top: var(--space-2); border-radius: var(--radius-control); background: var(--bg-soft); overflow: hidden; }
+  .mini-mark { position: absolute; left: var(--space-3); top: var(--space-2); font-family: var(--font-mono); font-size: var(--fs-tiny); color: var(--muted); }
+  .mini-line { position: absolute; left: var(--space-3); right: var(--space-3); bottom: var(--space-3); height: var(--focus-w); background: var(--control-border); }
+  .mini-dot { position: absolute; top: calc(-1 * var(--space-1)); left: 30%; width: var(--space-3); height: var(--space-3); border-radius: var(--radius-round); background: var(--node-on); }
+  .mini-dot--early { left: 12%; }
+  .process__mini--week .mini-dot:not(.mini-dot--early) { left: 55%; }
+  .process__mini--live .mini-dot { left: 80%; background: var(--opal-blue); }
+  .mini-bars { position: absolute; inset: var(--space-2) var(--space-3); display: flex; gap: var(--space-1); align-items: flex-end; }
+  .mini-bars i { flex: 1; border-radius: var(--space-1); background: var(--control-border); }
+  .mini-bars i:nth-child(1) { height: 40%; }
+  .mini-bars i:nth-child(2) { height: 55%; }
+  .mini-bars i:nth-child(3) { height: 70%; }
+  .mini-bars i:nth-child(4) { height: 85%; }
+  .mini-bars i:nth-child(5) { height: 100%; }
+  .process__step[data-reached='true'] .mini-bars i:nth-child(-n + 3) { background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-border) auto; }
 
   @media (min-width: 48rem) {
-    .process__inner { grid-template-columns: 5fr 7fr; align-items: start; }
-    .process__intro { position: sticky; top: calc(var(--header-h) + var(--space-6)); }
+    .process__steps { grid-template-columns: repeat(4, 1fr); gap: var(--space-5); padding: 0; }
+    .process__steps::before, .process__steps::after {
+      left: 0; right: 0; top: calc(var(--node-size) / 2 - var(--rail-w) / 2); bottom: auto; width: auto; height: var(--rail-w);
+    }
+    .process__steps::after { transform-origin: left; transform: scaleX(var(--progress)); }
+    .process__step { display: grid; grid-template-rows: auto 1fr; gap: var(--space-4); }
+    .process__panel { grid-template-rows: auto auto 1fr; }
+    .process__mini { align-self: end; }
+    .process__node { position: relative; left: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .process__steps::after, .process__node { transition: none; }
   }
 </style>

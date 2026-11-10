@@ -43,7 +43,8 @@ export interface Site {
   };
   projects: Project[];
   sections: { work: SectionHeading; services: SectionHeading; process: SectionHeading; nextProject: string };
-  process: { steps: { title: string; body: string }[]; note: string };
+  /** marks: the short labels in each step's decorative mini visual (day 1, week 1, …). */
+  process: { steps: { title: string; body: string; mark: string }[]; note: string };
   contact: {
     heading: string;
     line: string;
@@ -151,10 +152,10 @@ export const site: Site = {
   },
   process: {
     steps: [
-      { title: 'Discovery call', body: 'Understand the product, users and constraints.' },
-      { title: 'Plan & estimate', body: 'Written scope, milestones and price before any code.' },
-      { title: 'Build in weekly milestones', body: 'Working software every week, with a short written update.' },
-      { title: 'Launch & support', body: 'Deploy, hand over, and stay on for fixes and next steps.' },
+      { title: 'Discovery call', body: 'Understand the product, users and constraints.', mark: 'day 1' },
+      { title: 'Plan & estimate', body: 'Written scope, milestones and price before any code.', mark: 'week 1' },
+      { title: 'Build in weekly milestones', body: 'Working software every week, with a short written update.', mark: 'weekly' },
+      { title: 'Launch & support', body: 'Deploy, hand over, and stay on for fixes and next steps.', mark: 'live' },
     ],
     note: 'You talk directly to the engineer building your product. No hand-offs, no account managers.',
   },
