@@ -28,7 +28,7 @@ test('JSON-LD parses and describes the organization', async ({ page }) => {
   expect(ld.email).toBe('hello@pengopal.com');
 });
 
-test('footer has no GitHub link and the current year; the only GitHub link is Tenantry's repo', async ({ page }) => {
+test("footer has no GitHub link and the current year; the only GitHub link is Tenantry's repo", async ({ page }) => {
   await page.goto('/');
   const footer = page.locator('footer');
   await expect(footer).toContainText(`© ${new Date().getFullYear()} Pengopal Technologies`);
