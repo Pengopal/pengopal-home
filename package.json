@@ -24,12 +24,14 @@
     "astro": "7.3.8"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.0",
     "@resvg/resvg-js": "^2.6.2",
     "@types/culori": "^4.0.1",
     "culori": "^4.0.2",
     "jsdom": "^29.1.1",
+    "typescript": "^6.0.3",
     "vitest": "^5.1.0"
   }
 }
