@@ -40,3 +40,21 @@ section[id] { scroll-margin-top: var(--header-h); }
 .skip-link { position: absolute; left: var(--space-4); top: calc(-1 * var(--space-9)); z-index: 100;
   background: var(--surface); color: var(--text); padding: var(--space-2) var(--space-4); border-radius: var(--radius-control); }
 .skip-link:focus { top: var(--space-4); }
+
+/* Shared buttons (agreed with Furqan 2026-11-10). <a> for navigation, <button> for actions. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--space-7); padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-control); border: var(--border-w) solid transparent;
+  font-family: var(--font-body); font-size: var(--fs-body); font-weight: var(--fw-strong); line-height: 1;
+  text-decoration: none; cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out);
+}
+.btn--primary { background: var(--ink); color: var(--white); }
+.btn--primary:hover { background: var(--navy); }
+[data-theme='dark'] .btn--primary { background: var(--text); color: var(--ink-deep); }
+[data-theme='dark'] .btn--primary:hover { background: var(--muted); }
+.btn--secondary { background: transparent; color: var(--text); border-color: var(--border); }
+.btn--secondary:hover { border-color: var(--text); }
+.btn[disabled], .btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }

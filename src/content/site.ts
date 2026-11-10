@@ -33,7 +33,7 @@ export interface Site {
   };
   footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26'; linkedinLabel: string };
   notFound: { title: string; heading: string; body: string; home: string };
-  a11y: { skip: string };
+  a11y: { skip: string; navLabel: string; menu: string; themeToggle: string; home: string };
 }
 
 const SUB =
@@ -128,5 +128,5 @@ export const site: Site = {
     body: 'The link may be old, or the address mistyped.',
     home: 'Back to the homepage',
   },
-  a11y: { skip: 'Skip to content' },
+  a11y: { skip: 'Skip to content', navLabel: 'Primary', menu: 'Menu', themeToggle: 'Dark theme', home: 'Pengopal home' },
 };

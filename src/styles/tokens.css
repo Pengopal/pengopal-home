@@ -78,3 +78,6 @@
   --opal-text: var(--opal-light);
   color-scheme: dark;
 }
+
+/* Breakpoint: custom properties cannot be used inside @media, so components write this value
+   literally as (min-width: 48rem). Change it everywhere together. --bp-md: 48rem */
