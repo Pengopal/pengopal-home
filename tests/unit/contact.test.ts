@@ -114,3 +114,17 @@ test('invalid JSON → 400', async () => {
   const res = await handleContact(req('{not json'), ENV, fakeDeps().deps);
   expect(res.status).toBe(400);
 });
+
+test('line breaks or control characters in the name → 400, nothing sent', async () => {
+  const f = fakeDeps();
+  const res = await handleContact(req({ ...VALID, name: 'Ada\r\nBcc: victim@example.com' }), ENV, f.deps);
+  expect(res.status).toBe(400);
+  expect((await json(res)).fields).toHaveProperty('name');
+  expect(f.mails).toHaveLength(0);
+});
+
+test('control characters in the email → 400', async () => {
+  const res = await handleContact(req({ ...VALID, email: 'ada@example.com\nBcc: x@y.z' }), ENV, fakeDeps().deps);
+  expect(res.status).toBe(400);
+  expect((await json(res)).fields).toHaveProperty('email');
+});

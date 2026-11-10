@@ -12,6 +12,8 @@ interface Turnstile {
 type TurnstileWindow = Window & { turnstile?: Turnstile };
 
 const FIELDS = ['name', 'email', 'message', 'timeline'] as const;
+/** Same limit as the Worker, counted in characters as people count them (an emoji is one). */
+const MESSAGE_MAX = 4000;
 
 export function initContact(form: HTMLFormElement): void {
   const section = form.closest('section')!;
@@ -47,16 +49,22 @@ export function initContact(form: HTMLFormElement): void {
   };
 
   // Turnstile: loaded only when the form is near the viewport (spec §6.3).
+  const spamCheckFailed = () => { token = ''; tsError.hidden = false; refresh(); };
   const renderWidget = () => {
     const ts = (window as TurnstileWindow).turnstile;
-    if (!ts) return;
-    widget = ts.render(slot, {
+    if (!ts) return spamCheckFailed();
+    try {
+      widget = ts.render(slot, {
       sitekey: form.dataset.sitekey,
       appearance: 'interaction-only',
-      callback: (t: string) => { token = t; refresh(); },
-      'expired-callback': () => { token = ''; refresh(); },
-      'error-callback': () => { token = ''; refresh(); },
-    });
+        callback: (t: string) => { token = t; tsError.hidden = true; refresh(); },
+        'expired-callback': () => { token = ''; refresh(); },
+        // Domain not allowed, challenge failed, network blocked: say so and offer email.
+        'error-callback': spamCheckFailed,
+      });
+    } catch {
+      spamCheckFailed();
+    }
   };
   const loadTurnstile = () => {
     if ((window as TurnstileWindow).turnstile) return renderWidget();
@@ -64,7 +72,7 @@ export function initContact(form: HTMLFormElement): void {
     s.src = TURNSTILE_SRC;
     s.async = true;
     s.onload = renderWidget;
-    s.onerror = () => { tsError.hidden = false; refresh(); };
+    s.onerror = spamCheckFailed;
     document.head.appendChild(s);
   };
   onReveal(form, loadTurnstile, { threshold: 0, rootMargin: '600px 0px' });
@@ -78,7 +86,8 @@ export function initContact(form: HTMLFormElement): void {
     let firstInvalid: HTMLElement | null = null;
     for (const n of FIELDS) {
       const input = field(n);
-      if (input && !input.checkValidity()) {
+      const tooLong = n === 'message' && !!input && Array.from(input.value).length > MESSAGE_MAX;
+      if (input && (!input.checkValidity() || tooLong)) {
         showError(n);
         firstInvalid ??= input;
       }

@@ -24,7 +24,8 @@ const c = site.contact;
         </div>
         <div class="field">
           <label for="f-message">{c.labels.message}</label>
-          <textarea id="f-message" name="message" rows="5" required maxlength="4000" aria-describedby="e-message"></textarea>
+          <!-- No maxlength: browsers count emoji as two characters and would silently cut the message; the script counts as people do. -->
+          <textarea id="f-message" name="message" rows="5" required aria-describedby="e-message"></textarea>
           <p class="field__error" id="e-message" hidden></p>
         </div>
         <div class="field">

@@ -46,3 +46,12 @@ test('mailto encodes Arabic and newlines', () => {
   expect(url).not.toMatch(/[\s]/);
   expect(url.split('?')[1].split('&')).toHaveLength(2);
 });
+
+test('a request that never answers fails after the timeout', async () => {
+  const hang = ((_u: string, init: RequestInit) =>
+    new Promise((_, reject) => init.signal?.addEventListener('abort', () => reject(new DOMException('timeout', 'TimeoutError'))))) as typeof fetch;
+  const started = Date.now();
+  const r = await submitEnquiry(DATA, hang, 50);
+  expect(r).toEqual({ ok: false, kind: 'failed' });
+  expect(Date.now() - started).toBeLessThan(2000);
+});

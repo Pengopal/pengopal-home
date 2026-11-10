@@ -117,3 +117,55 @@ test("client-side errors use our own wording, not the browser's", async ({ page 
   await expect(email).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('#e-email')).toHaveText('Please enter a valid email address.');
 });
+
+test('a 4000-character Arabic and emoji message is sent whole', async ({ page }) => {
+  await stubTurnstile(page);
+  let sent = '';
+  await page.route('**/api/contact', async (r) => {
+    sent = r.request().postDataJSON().message;
+    await r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+  await page.goto('/');
+  const form = await fill(page);
+  const msg = Array.from('مرحبا 👋 '.repeat(800)).slice(0, 4000).join('');
+  const box = form.getByLabel('What are you building?');
+  await box.fill('');
+  await box.focus();
+  await page.keyboard.insertText(msg);
+  await form.getByRole('button', { name: 'Send' }).click();
+  await expect(page.locator('section#contact [data-success]')).toBeVisible();
+  expect(Array.from(sent)).toHaveLength(4000);
+  expect(sent).toBe(msg);
+});
+
+test('a message over 4000 characters shows our error and is not sent', async ({ page }) => {
+  await stubTurnstile(page);
+  let requests = 0;
+  await page.route('**/api/contact', (r) => { requests++; return r.fulfill({ status: 200, body: '{"ok":true}' }); });
+  await page.goto('/');
+  const form = await fill(page);
+  const box = form.getByLabel('What are you building?');
+  await box.fill('a'.repeat(4001));
+  await form.getByRole('button', { name: 'Send' }).click();
+  await expect(page.locator('#e-message')).toHaveText('Please tell us what you are building (up to 4000 characters).');
+  expect(requests).toBe(0);
+});
+
+for (const failure of ['error-callback', 'render throws'] as const) {
+  test(`spam-check ${failure}: a message and the email link are shown`, async ({ page }) => {
+    await page.addInitScript((mode) => {
+      (window as unknown as { turnstile: unknown }).turnstile = {
+        render: (_el: Element, opts: Record<string, () => void>) => {
+          if (mode === 'render throws') throw new Error('bad sitekey');
+          setTimeout(() => opts['error-callback'](), 0);
+          return 'w1';
+        },
+        reset: () => {},
+      };
+    }, failure);
+    await page.goto('/');
+    await page.locator('section#contact form').scrollIntoViewIfNeeded();
+    await expect(page.locator('section#contact [data-turnstile-error]')).toBeVisible();
+    await expect(page.locator('section#contact form').getByRole('button', { name: 'Send' })).toBeDisabled();
+  });
+}

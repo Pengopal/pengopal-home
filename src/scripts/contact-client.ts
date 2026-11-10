@@ -15,9 +15,17 @@ export type SubmitResult =
   | { ok: false; kind: 'failed' };
 
 /** Sends the enquiry to the Worker (spec §6.2). Anything but success or field errors is "failed". */
-export async function submitEnquiry(data: EnquiryInput, fetchImpl: typeof fetch = fetch): Promise<SubmitResult> {
+/** A stalled request gives up after this long, so the visitor gets the email fallback instead of waiting. */
+export const SUBMIT_TIMEOUT_MS = 15_000;
+
+export async function submitEnquiry(
+  data: EnquiryInput,
+  fetchImpl: typeof fetch = fetch,
+  timeoutMs = SUBMIT_TIMEOUT_MS,
+): Promise<SubmitResult> {
   try {
     const res = await fetchImpl('/api/contact', {
+      signal: AbortSignal.timeout(timeoutMs),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(data),

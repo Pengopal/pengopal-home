@@ -76,8 +76,9 @@ These steps need your Cloudflare login, so they're yours to run.
 3. **Email Routing.** Check that it's enabled for pengopal.com. Enquiries are sent from `website@pengopal.com`, with reply-to set to the visitor.
 4. **Deploy.**
    ```bash
-   npm run build && npx wrangler deploy
+   npm run deploy
    ```
+   This refuses to deploy if `PUBLIC_TURNSTILE_SITE_KEY` is missing or is the test key. With the test key, every enquiry would be rejected and you'd never know. Use `npm run deploy` rather than calling `wrangler deploy` directly.
 5. **Domains.** In the Worker's settings, add `pengopal.com` and `www.pengopal.com` as custom domains, and redirect `www` to the apex with a redirect rule.
 
 ### After the first deploy

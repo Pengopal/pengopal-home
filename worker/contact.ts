@@ -15,6 +15,8 @@ export interface ContactDeps {
 
 const MAX_BODY_BYTES = 16_384;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Line breaks and other control characters must never reach email headers (subject, reply-to). */
+const CONTROL = /[\u0000-\u001f\u007f]/;
 
 const reply = (status: number, body: Record<string, unknown>) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
@@ -48,8 +50,8 @@ export async function handleContact(request: Request, env: Pick<Env, 'CONTACT_TO
   const message = str(body.message); // sent exactly as typed; only checked for being blank
   const timeline = str(body.timeline);
   const fields: Record<string, string> = {};
-  if (chars(name) < 1 || chars(name) > 120) fields.name = site.contact.errors.name;
-  if (email.length > 254 || !EMAIL_RE.test(email)) fields.email = site.contact.errors.email;
+  if (chars(name) < 1 || chars(name) > 120 || CONTROL.test(name)) fields.name = site.contact.errors.name;
+  if (email.length > 254 || !EMAIL_RE.test(email) || CONTROL.test(email)) fields.email = site.contact.errors.email;
   if (message.trim() === '' || chars(message) > 4000) fields.message = site.contact.errors.message;
   if (timeline !== '' && !(TIMELINES as readonly string[]).includes(timeline)) fields.timeline = site.contact.errors.timeline;
   if (Object.keys(fields).length) return reply(400, { ok: false, fields });
