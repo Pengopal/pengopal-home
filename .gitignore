@@ -30,3 +30,6 @@ screenshots/
 .lighthouseci/
 .wrangler/
 .dev.vars
+
+# local agent scratch (plans in progress, ledgers, mockups)
+.superpowers/
