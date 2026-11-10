@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "pengopal-web",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-10",
+  "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "404-page" },
+  "send_email": [{ "name": "EMAIL" }],
+  "observability": { "enabled": true }
+  // Secrets (never committed): TURNSTILE_SECRET, CONTACT_TO — set with `wrangler secret put`.
+}
