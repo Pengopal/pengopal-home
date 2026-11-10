@@ -22,6 +22,7 @@ export interface Site {
   nav: { label: string; href: Anchor }[];
   hero: { lead: string; highlight: string; sub: string; primary: Cta; secondary: Cta };
   services: Service[];
+  sections: { services: string; process: string; openSource: string };
   process: { steps: { title: string; body: string }[]; note: string };
   openSource: { title: string; status: 'Coming soon'; description: string; features: string[]; href?: string };
   contact: {
@@ -89,6 +90,7 @@ export const site: Site = {
       icon: 'key',
     },
   ],
+  sections: { services: 'What we build', process: 'How we work', openSource: 'Building in public' },
   process: {
     steps: [
       { title: 'Discovery call', body: 'Understand the product, users and constraints.' },

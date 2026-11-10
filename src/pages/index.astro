@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import Services from '../components/Services.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../content/site';
 ---
@@ -9,14 +10,7 @@ import { site } from '../content/site';
   <Header />
   <main id="main">
     <Hero />
-    <!-- stub until Task 8 builds the real section -->
-    <section id="services" aria-labelledby="services-title" class="stub">
-      <h2 id="services-title" class="container">{site.nav[0].label}</h2>
-    </section>
+    <Services />
   </main>
   <Footer />
 </Base>
-
-<style>
-  .stub { min-height: 150vh; padding-top: var(--space-9); }
-</style>

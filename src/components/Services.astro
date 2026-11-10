@@ -1,0 +1,43 @@
+---
+import ServiceCard from './ServiceCard.astro';
+import { site } from '../content/site';
+---
+<section id="services" class="section" aria-labelledby="services-title">
+  <div class="container">
+    <h2 id="services-title">{site.sections.services}</h2>
+    <div class="services__grid">
+      {site.services.map((service) => <ServiceCard service={service} />)}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { onReveal, prefersReducedMotion } from '../motion/reveal';
+  import { assembleInto } from '../motion/assemble';
+
+  for (const card of document.querySelectorAll<HTMLElement>('#services .service')) {
+    const icon = card.querySelector<SVGSVGElement>('svg.service__icon');
+    if (!icon) continue;
+    // Hide the icon only when JS is running and motion is allowed; without JS it simply shows.
+    if (!prefersReducedMotion()) card.dataset.pending = 'true';
+    onReveal(card, () => assembleInto(card, icon), { threshold: 0.4 });
+  }
+</script>
+
+<style>
+  .services__grid { display: grid; gap: var(--space-5); margin-top: var(--space-7); }
+  @media (min-width: 48rem) {
+    .services__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  :global(.glyph-fly) {
+    position: absolute; z-index: 40; pointer-events: none;
+    font-family: var(--font-mono); font-weight: 600; font-size: var(--fs-label); line-height: 1;
+    transform: translate(-50%, -50%);
+    animation-name: glyph-fly; animation-timing-function: var(--ease-out); animation-fill-mode: forwards;
+  }
+  @keyframes glyph-fly {
+    0% { opacity: 0; transform: translate(-50%, -50%); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); }
+  }
+</style>

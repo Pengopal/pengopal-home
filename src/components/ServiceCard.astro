@@ -1,0 +1,32 @@
+---
+import type { Service } from '../content/site';
+import Brackets from './icons/Brackets.astro';
+import Spark from './icons/Spark.astro';
+import Key from './icons/Key.astro';
+
+interface Props { service: Service }
+const { service } = Astro.props;
+const Icon = { brackets: Brackets, spark: Spark, key: Key }[service.icon];
+---
+<article class="service" aria-labelledby={`service-${service.id}`}>
+  <div class="service__icon-wrap"><Icon /></div>
+  <h3 id={`service-${service.id}`}>{service.title}</h3>
+  <p class="service__outcome">{service.outcome}</p>
+  <ul class="service__list">
+    {service.deliverables.map((d) => <li>{d}</li>)}
+  </ul>
+</article>
+
+<style>
+  .service {
+    display: flex; flex-direction: column; gap: var(--space-3);
+    padding: var(--space-6); background: var(--surface);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+  }
+  .service__icon-wrap { color: var(--navy); margin-bottom: var(--space-2); }
+  :global([data-theme='dark']) .service__icon-wrap { color: var(--muted); }
+  .service :global(.service__icon) { display: block; transition: opacity var(--dur-1) var(--ease-out); }
+  .service[data-pending='true'] :global(.service__icon) { opacity: 0; }
+  .service__outcome { margin: 0; color: var(--muted); }
+  .service__list { margin: var(--space-2) 0 0; padding-left: var(--space-5); display: grid; gap: var(--space-1); }
+</style>
