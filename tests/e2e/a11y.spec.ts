@@ -43,9 +43,9 @@ test('keyboard order runs skip link → logo → nav → theme → CTA → hero 
   expect(order).toEqual([
     'Skip to content',
     'Pengopal home',
+    'Work',
     'Services',
     'How we work',
-    'Open source',
     'Contact',
     'Start a project',
     'Dark theme',

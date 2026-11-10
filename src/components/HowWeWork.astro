@@ -4,7 +4,8 @@ import { site } from '../content/site';
 <section id="how-we-work" class="section process" aria-labelledby="process-title">
   <div class="container process__inner">
     <div class="process__intro">
-      <h2 id="process-title">{site.sections.process}</h2>
+      <p class="eyebrow">{site.sections.process.eyebrow}</p>
+      <h2 id="process-title">{site.sections.process.title} <span class="opal-text">{site.sections.process.highlight}</span></h2>
       <p class="process__note">{site.process.note}</p>
     </div>
     <ol class="process__steps" role="list" data-commit-line>

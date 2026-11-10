@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('four steps in an ordered list with h3 titles and the note', async ({ page }) => {
   await page.goto('/');
   const section = page.locator('section#how-we-work');
-  await expect(section.locator('h2')).toHaveText('How we work');
+  await expect(section.locator('h2')).toHaveText('From first call to production.');
   await expect(section.locator('ol > li')).toHaveCount(4);
   await expect(section.locator('ol > li h3')).toHaveText([
     'Discovery call',

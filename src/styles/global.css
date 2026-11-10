@@ -90,3 +90,9 @@ section[id] { scroll-margin-top: var(--header-h); }
   20% { opacity: 1; }
   100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); }
 }
+
+/* Section eyebrow above an h2 (spec v2 §3). */
+.eyebrow {
+  margin: 0 0 var(--space-3); font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+}

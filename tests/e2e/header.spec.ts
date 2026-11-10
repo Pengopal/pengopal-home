@@ -18,7 +18,7 @@ test('toggle switches and persists theme', async ({ browser }) => {
 test('primary nav links and CTA', async ({ page }) => {
   await page.goto('/');
   const nav = page.getByRole('navigation', { name: 'Primary' });
-  await expect(nav.getByRole('link')).toHaveText(['Services', 'How we work', 'Open source', 'Contact']);
+  await expect(nav.getByRole('link')).toHaveText(['Work', 'Services', 'How we work', 'Contact']);
   await expect(page.locator('header a.btn.btn--primary')).toHaveAttribute('href', '#contact');
   await expect(page.locator('header').getByRole('img', { name: 'Pengopal' })).toBeVisible();
 });

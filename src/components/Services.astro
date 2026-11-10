@@ -4,7 +4,8 @@ import { site } from '../content/site';
 ---
 <section id="services" class="section" aria-labelledby="services-title">
   <div class="container">
-    <h2 id="services-title">{site.sections.services}</h2>
+    <p class="eyebrow">{site.sections.services.eyebrow}</p>
+    <h2 id="services-title">{site.sections.services.title} <span class="opal-text">{site.sections.services.highlight}</span></h2>
     <div class="services__grid">
       {site.services.map((service) => <ServiceCard service={service} />)}
     </div>

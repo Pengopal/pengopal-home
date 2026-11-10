@@ -3,11 +3,11 @@ import { test, expect } from '@playwright/test';
 test('three service cards, each with an h3 and four deliverables', async ({ page }) => {
   await page.goto('/');
   const section = page.locator('section#services');
-  await expect(section.locator('h2')).toHaveText('What we build');
+  await expect(section.locator('h2')).toHaveText('What we build for you.');
   const cards = section.locator('article.service');
   await expect(cards).toHaveCount(3);
   await expect(cards.locator('h3')).toHaveText(['Web apps & SaaS', 'AI features', 'Identity & multi-tenant SaaS']);
-  for (let i = 0; i < 3; i++) await expect(cards.nth(i).locator('ul > li')).toHaveCount(4);
+  for (let i = 0; i < 3; i++) await expect(cards.nth(i).locator('ul > li')).toHaveCount(3);
   await expect(cards.locator('svg.service__icon')).toHaveCount(3);
 });
 

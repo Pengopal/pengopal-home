@@ -8,7 +8,7 @@ test('h1 text and the two calls to action', async ({ page }) => {
   await expect(page.locator('h1 .opal-text')).toHaveText('built end to end.');
   const hero = page.locator('section.hero');
   await expect(hero.locator('a.btn.btn--primary')).toHaveAttribute('href', '#contact');
-  await expect(hero.locator('a.btn.btn--secondary')).toHaveAttribute('href', '#open-source');
+  await expect(hero.locator('a.btn.btn--secondary')).toHaveAttribute('href', '#work');
 });
 
 test.describe('without JavaScript', () => {
