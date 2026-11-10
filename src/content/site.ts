@@ -31,6 +31,12 @@ export interface Site {
     email: 'hello@pengopal.com';
     timelines: typeof TIMELINES;
     turnstileSiteKey: string;
+    labels: { name: string; email: string; message: string; timeline: string; timelineEmpty: string; send: string; sending: string; trap: string };
+    preferEmail: string;
+    success: { heading: string; body: string };
+    failed: string;
+    failedLink: string;
+    spamCheckFailed: string;
   };
   footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26'; linkedinLabel: string };
   notFound: { title: string; heading: string; body: string; home: string };
@@ -118,6 +124,21 @@ export const site: Site = {
     email: 'hello@pengopal.com',
     timelines: TIMELINES,
     turnstileSiteKey: import.meta.env?.PUBLIC_TURNSTILE_SITE_KEY ?? TURNSTILE_TEST_SITE_KEY,
+    labels: {
+      name: 'Name',
+      email: 'Email',
+      message: 'What are you building?',
+      timeline: 'Timeline',
+      timelineEmpty: 'Select…',
+      send: 'Send',
+      sending: 'Sending…',
+      trap: 'Website',
+    },
+    preferEmail: 'Prefer email?',
+    success: { heading: 'Thanks — message received.', body: "We'll read it and get back to you by email." },
+    failed: "Your message didn't send.",
+    failedLink: 'Email it to us instead',
+    spamCheckFailed: "The spam check couldn't load, so the form can't send right now.",
   },
   footer: {
     company: 'Pengopal Technologies',

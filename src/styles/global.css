@@ -1,5 +1,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 
+/* The hidden attribute always wins over component display rules. */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
@@ -61,3 +64,16 @@ section[id] { scroll-margin-top: var(--header-h); }
 
 /* Vertical rhythm between page sections. */
 .section { padding-block: var(--space-9); }
+
+/* Flying code characters: services icon assembly and the contact success burst. */
+.glyph-fly {
+  position: absolute; z-index: 40; pointer-events: none;
+  font-family: var(--font-mono); font-weight: 600; font-size: var(--fs-label); line-height: 1;
+  transform: translate(-50%, -50%);
+  animation-name: glyph-fly; animation-timing-function: var(--ease-out); animation-fill-mode: forwards;
+}
+@keyframes glyph-fly {
+  0% { opacity: 0; transform: translate(-50%, -50%); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); }
+}

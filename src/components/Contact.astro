@@ -1,0 +1,95 @@
+---
+import { site } from '../content/site';
+const c = site.contact;
+---
+<section id="contact" class="section contact" aria-labelledby="contact-title">
+  <div class="container contact__inner">
+    <div class="contact__intro">
+      <h2 id="contact-title">{c.heading}</h2>
+      <p>{c.line}</p>
+      <p class="contact__prefer">{c.preferEmail} <a href={`mailto:${c.email}`}>{c.email}</a></p>
+    </div>
+
+    <div class="contact__panel">
+      <form class="contact__form" novalidate data-contact-form data-sitekey={c.turnstileSiteKey}>
+        <div class="field">
+          <label for="f-name">{c.labels.name}</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="e-name" />
+          <p class="field__error" id="e-name" hidden></p>
+        </div>
+        <div class="field">
+          <label for="f-email">{c.labels.email}</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="254" aria-describedby="e-email" />
+          <p class="field__error" id="e-email" hidden></p>
+        </div>
+        <div class="field">
+          <label for="f-message">{c.labels.message}</label>
+          <textarea id="f-message" name="message" rows="5" required maxlength="4000" aria-describedby="e-message"></textarea>
+          <p class="field__error" id="e-message" hidden></p>
+        </div>
+        <div class="field">
+          <label for="f-timeline">{c.labels.timeline}</label>
+          <select id="f-timeline" name="timeline" aria-describedby="e-timeline">
+            <option value="">{c.labels.timelineEmpty}</option>
+            {c.timelines.map((t) => <option value={t}>{t}</option>)}
+          </select>
+          <p class="field__error" id="e-timeline" hidden></p>
+        </div>
+        <div class="contact__trap" aria-hidden="true">
+          <label for="f-website">{c.labels.trap}</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <div class="contact__turnstile" data-turnstile></div>
+        <button class="btn btn--primary contact__send" type="submit" disabled data-label={c.labels.send} data-sending={c.labels.sending}>{c.labels.send}</button>
+        <div class="contact__alert" role="alert" hidden data-failed>
+          {c.failed} <a href={`mailto:${c.email}`} data-mailto>{c.failedLink}</a>
+        </div>
+        <p class="contact__alert" hidden data-turnstile-error>
+          {c.spamCheckFailed} <a href={`mailto:${c.email}`}>{c.email}</a>
+        </p>
+      </form>
+
+      <div class="contact__success" role="status" tabindex="-1" hidden data-success>
+        <h3>{c.success.heading}</h3>
+        <p>{c.success.body}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initContact } from '../scripts/contact';
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) initContact(form);
+</script>
+
+<style>
+  .contact__inner { display: grid; gap: var(--space-7); }
+  .contact__intro p { margin: var(--space-4) 0 0; color: var(--muted); }
+  .contact__prefer a { color: var(--text); font-weight: var(--fw-strong); }
+  .contact__panel {
+    padding: var(--space-6); background: var(--surface);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+  }
+  .contact__form { display: grid; gap: var(--space-5); }
+  .field { display: grid; gap: var(--space-2); }
+  .field label { font-weight: var(--fw-strong); }
+  .field input, .field textarea, .field select {
+    font: inherit; color: var(--text); background: var(--bg);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    padding: var(--space-3) var(--space-4); min-height: var(--space-7); width: 100%;
+  }
+  .field textarea { resize: vertical; }
+  .field [aria-invalid='true'] { border-color: var(--error); }
+  .field__error { margin: 0; color: var(--error); font-size: var(--fs-label); line-height: var(--lh-label); }
+  .contact__trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .contact__send { justify-self: start; }
+  .contact__alert { margin: 0; color: var(--error); }
+  .contact__alert a { color: inherit; font-weight: var(--fw-strong); }
+  .contact__success h3 { margin-bottom: var(--space-3); }
+  .contact__success p { margin: 0; color: var(--muted); }
+
+  @media (min-width: 48rem) {
+    .contact__inner { grid-template-columns: 5fr 7fr; align-items: start; }
+  }
+</style>

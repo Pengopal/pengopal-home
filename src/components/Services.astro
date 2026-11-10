@@ -29,15 +29,4 @@ import { site } from '../content/site';
   @media (min-width: 48rem) {
     .services__grid { grid-template-columns: repeat(3, 1fr); }
   }
-  :global(.glyph-fly) {
-    position: absolute; z-index: 40; pointer-events: none;
-    font-family: var(--font-mono); font-weight: 600; font-size: var(--fs-label); line-height: 1;
-    transform: translate(-50%, -50%);
-    animation-name: glyph-fly; animation-timing-function: var(--ease-out); animation-fill-mode: forwards;
-  }
-  @keyframes glyph-fly {
-    0% { opacity: 0; transform: translate(-50%, -50%); }
-    20% { opacity: 1; }
-    100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); }
-  }
 </style>
