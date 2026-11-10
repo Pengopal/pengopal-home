@@ -32,7 +32,7 @@ const markY = FRAME_H * 0.62 - MARK.w * MARK.tailY;
     </svg>
     <canvas class="hero__canvas" data-codestream hidden></canvas>
     <svg class="hero__mark" viewBox={`0 0 ${FRAME_W} ${FRAME_H}`} preserveAspectRatio="xMaxYMid slice">
-      <image href="/brand/mark.svg" x={markX.toFixed(1)} y={markY.toFixed(1)} width={MARK.w} height={MARK.w} />
+      <image data-href="/brand/mark.svg" x={markX.toFixed(1)} y={markY.toFixed(1)} width={MARK.w} height={MARK.w} />
     </svg>
   </div>
 
@@ -47,7 +47,8 @@ const markY = FRAME_H * 0.62 - MARK.w * MARK.tailY;
 </section>
 
 <script>
-  import { startCodeStream } from '../scripts/hero';
+  import { loadHeroArt, startCodeStream } from '../scripts/hero';
+  loadHeroArt();
   startCodeStream();
 </script>
 

@@ -56,3 +56,16 @@ export function startCodeStream(): void {
   if (document.readyState === 'complete') afterLoad();
   else window.addEventListener('load', afterLoad, { once: true });
 }
+
+/**
+ * The hero penguin is decorative and not the largest content: fetch it once the page has loaded,
+ * so it never delays the first paint (the code-stream poster fills the hero until then).
+ */
+export function loadHeroArt(): void {
+  const set = () =>
+    document.querySelectorAll<SVGImageElement>('svg.hero__mark image[data-href]').forEach((img) => {
+      img.setAttribute('href', img.dataset.href!);
+    });
+  if (document.readyState === 'complete') set();
+  else window.addEventListener('load', set, { once: true });
+}

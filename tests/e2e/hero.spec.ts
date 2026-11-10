@@ -73,3 +73,18 @@ test('desktop does not fetch the 3D chunk before load has settled', async ({ pag
   await page.waitForTimeout(1500);
   expect(chunks).toEqual([]);
 });
+
+test('the hero penguin loads after the page load, not during first paint', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __loadAt: number }).__loadAt = 0;
+    addEventListener('load', () => ((window as unknown as { __loadAt: number }).__loadAt = performance.now()));
+  });
+  await page.goto('/');
+  const mark = page.locator('svg.hero__mark image');
+  await expect(mark).toHaveAttribute('href', '/brand/mark.svg', { timeout: 5000 });
+  const t = await page.evaluate(() => {
+    const e = performance.getEntriesByType('resource').find((r) => r.name.endsWith('/brand/mark.svg'));
+    return { start: e ? e.startTime : -1, load: (window as unknown as { __loadAt: number }).__loadAt };
+  });
+  expect(t.start).toBeGreaterThanOrEqual(t.load);
+});

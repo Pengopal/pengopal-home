@@ -101,3 +101,10 @@ section[id] { scroll-margin-top: var(--header-h); }
 @keyframes scene-drift { to { background-position: calc(-1 * var(--opal-mosaic-size-border)) 0; } }
 @keyframes scene-pulse { 50% { opacity: 0.35; } }
 @keyframes scene-dash { to { background-position: var(--space-3) 0; } }
+
+/* Decorative, continuously running animations stay paused until the page has loaded and gone idle
+   (html[data-motion="on"], set in Base.astro), so they never slow the first paint. */
+html:not([data-motion='on']) :is(.opal-text, .btn--primary, .project__shot, [data-scene] *) {
+  animation-play-state: paused;
+}
+

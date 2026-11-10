@@ -96,3 +96,8 @@ test('a missing screenshot keeps the layout and shows its alt', async ({ browser
   expect(Math.abs(ok.h - broken.h)).toBeLessThanOrEqual(2);
   expect(broken.alt).toBe('Tenantry search across pages, people and projects');
 });
+
+test("Tenantry's logo is lazy-loaded (it sits below the fold)", async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('section#work .project__name img')).toHaveAttribute('loading', 'lazy');
+});

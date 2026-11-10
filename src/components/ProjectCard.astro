@@ -10,7 +10,7 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
   <div class="project__copy">
     <div class="project__head">
       <h3 id={`project-${p.id}`} class="project__name">
-        <img src={p.logo.src} alt={p.logo.alt} width={p.logo.width} height={p.logo.height} decoding="async" />
+        <img src={p.logo.src} alt={p.logo.alt} width={p.logo.width} height={p.logo.height} loading="lazy" decoding="async" />
       </h3>
       <span class="project__badge">{p.badge}</span>
     </div>

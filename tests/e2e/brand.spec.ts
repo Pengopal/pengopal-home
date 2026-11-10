@@ -28,3 +28,36 @@ test.describe('reduced motion', () => {
     await expect(page.locator('.btn--primary').first()).toHaveCSS('animation-name', 'none');
   });
 });
+
+test('decorative motion waits until the page has loaded and gone idle', async ({ page }) => {
+  await page.addInitScript(() => {
+    // Record the motion flag and the opal text's play state at the very first paint.
+    requestAnimationFrame(() => {
+      const hl = document.querySelector('h1 .opal-text');
+      (window as unknown as { __first: unknown }).__first = {
+        motion: document.documentElement.dataset.motion ?? null,
+        state: hl ? getComputedStyle(hl).animationPlayState : null,
+      };
+    });
+  });
+  await page.goto('/');
+  expect(await page.evaluate(() => (window as unknown as { __first: unknown }).__first)).toEqual({ motion: null, state: 'paused' });
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'on', { timeout: 5000 });
+  await expect(page.locator('h1 .opal-text')).toHaveCSS('animation-play-state', 'running');
+});
+
+test.describe('reduced motion never turns decorative motion on', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('no data-motion flag', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(2500);
+    await expect(page.locator('html')).not.toHaveAttribute('data-motion', 'on');
+  });
+});
+
+test('the feature-band glow uses a mask, not a blur filter', async ({ page }) => {
+  await page.goto('/');
+  const glow = page.locator('section#work .work__glow');
+  await expect(glow).toHaveCSS('filter', 'none');
+  expect(await glow.evaluate((el) => getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage)).toContain('radial-gradient');
+});

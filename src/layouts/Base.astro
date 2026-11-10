@@ -57,6 +57,14 @@ const orgLd = {
         document.documentElement.dataset.theme =
           stored === 'light' || stored === 'dark' ? stored : dark ? 'dark' : 'light';
       })();
+      // Decorative motion (drifting opal, floating screenshots) starts only once the page has loaded and gone
+      // idle, so it never competes with the first paint; never under reduced motion (spec v2 §5).
+      (function () {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var on = function () { document.documentElement.dataset.motion = 'on'; };
+        var idle = function () { 'requestIdleCallback' in window ? requestIdleCallback(on, { timeout: 2000 }) : setTimeout(on, 200); };
+        if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+      })();
     </script>
     <slot name="head" />
   </head>
