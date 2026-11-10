@@ -4,7 +4,7 @@ const year = new Date().getFullYear();
 ---
 <footer class="footer">
   <div class="container footer__inner">
-    <p class="footer__copy">© {year} {site.footer.company}</p>
+    <p class="footer__copy">{site.brand.copyrightMark} {year} {site.footer.company}</p>
     <ul class="footer__links" role="list">
       <li><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></li>
       <li><a href={site.footer.linkedin} rel="me noopener" target="_blank">{site.footer.linkedinLabel}</a></li>

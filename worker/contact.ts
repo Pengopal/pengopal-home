@@ -1,4 +1,4 @@
-import { TIMELINES } from '../src/content/site';
+import { TIMELINES, site } from '../src/content/site';
 import type { Env } from './types';
 
 export interface MailMessage {
@@ -48,10 +48,10 @@ export async function handleContact(request: Request, env: Pick<Env, 'CONTACT_TO
   const message = str(body.message); // sent exactly as typed; only checked for being blank
   const timeline = str(body.timeline);
   const fields: Record<string, string> = {};
-  if (chars(name) < 1 || chars(name) > 120) fields.name = 'Please enter your name (up to 120 characters).';
-  if (email.length > 254 || !EMAIL_RE.test(email)) fields.email = 'Please enter a valid email address.';
-  if (message.trim() === '' || chars(message) > 4000) fields.message = 'Please tell us what you are building (up to 4000 characters).';
-  if (timeline !== '' && !(TIMELINES as readonly string[]).includes(timeline)) fields.timeline = 'Please choose a timeline from the list.';
+  if (chars(name) < 1 || chars(name) > 120) fields.name = site.contact.errors.name;
+  if (email.length > 254 || !EMAIL_RE.test(email)) fields.email = site.contact.errors.email;
+  if (message.trim() === '' || chars(message) > 4000) fields.message = site.contact.errors.message;
+  if (timeline !== '' && !(TIMELINES as readonly string[]).includes(timeline)) fields.timeline = site.contact.errors.timeline;
   if (Object.keys(fields).length) return reply(400, { ok: false, fields });
 
   const ok = await deps.verifyTurnstile(str(body.turnstileToken), request.headers.get('cf-connecting-ip'));

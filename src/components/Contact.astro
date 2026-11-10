@@ -35,7 +35,7 @@ const c = site.contact;
           </select>
           <p class="field__error" id="e-timeline" hidden></p>
         </div>
-        <div class="contact__trap" aria-hidden="true">
+        <div class="visually-hidden" aria-hidden="true">
           <label for="f-website">{c.labels.trap}</label>
           <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
         </div>
@@ -44,7 +44,7 @@ const c = site.contact;
         <div class="contact__alert" role="alert" hidden data-failed>
           {c.failed} <a href={`mailto:${c.email}`} data-mailto>{c.failedLink}</a>
         </div>
-        <p class="contact__alert" hidden data-turnstile-error>
+        <p class="contact__alert" role="alert" hidden data-turnstile-error>
           {c.spamCheckFailed} <a href={`mailto:${c.email}`}>{c.email}</a>
         </p>
       </form>
@@ -76,13 +76,12 @@ const c = site.contact;
   .field label { font-weight: var(--fw-strong); }
   .field input, .field textarea, .field select {
     font: inherit; color: var(--text); background: var(--bg);
-    border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    border: var(--border-w) solid var(--control-border); border-radius: var(--radius-control);
     padding: var(--space-3) var(--space-4); min-height: var(--space-7); width: 100%;
   }
   .field textarea { resize: vertical; }
   .field [aria-invalid='true'] { border-color: var(--error); }
   .field__error { margin: 0; color: var(--error); font-size: var(--fs-label); line-height: var(--lh-label); }
-  .contact__trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   .contact__send { justify-self: start; }
   .contact__alert { margin: 0; color: var(--error); }
   .contact__alert a { color: inherit; font-weight: var(--fw-strong); }

@@ -37,7 +37,9 @@ export interface Site {
     failed: string;
     failedLink: string;
     spamCheckFailed: string;
+    errors: { name: string; email: string; message: string; timeline: string };
   };
+  brand: { name: 'Pengopal'; logoAlt: string; ogImageAlt: string; copyrightMark: string };
   footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26'; linkedinLabel: string };
   notFound: { title: string; heading: string; body: string; home: string };
   a11y: { skip: string; navLabel: string; menu: string; themeToggle: string; home: string };
@@ -139,7 +141,14 @@ export const site: Site = {
     failed: "Your message didn't send.",
     failedLink: 'Email it to us instead',
     spamCheckFailed: "The spam check couldn't load, so the form can't send right now.",
+    errors: {
+      name: 'Please enter your name (up to 120 characters).',
+      email: 'Please enter a valid email address.',
+      message: 'Please tell us what you are building (up to 4000 characters).',
+      timeline: 'Please choose a timeline from the list.',
+    },
   },
+  brand: { name: 'Pengopal', logoAlt: 'Pengopal', ogImageAlt: 'Pengopal logo on deep navy', copyrightMark: '©' },
   footer: {
     company: 'Pengopal Technologies',
     linkedin: 'https://www.linkedin.com/in/furqan26',

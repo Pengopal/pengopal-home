@@ -28,7 +28,7 @@ import { site } from '../content/site';
 <style>
   .process { background: var(--bg-soft); }
   .process__inner { display: grid; gap: var(--space-7); }
-  .process__note { margin: var(--space-4) 0 0; color: var(--muted); max-width: 32rem; }
+  .process__note { margin: var(--space-4) 0 0; color: var(--muted); max-width: var(--measure-text); }
 
   /* The commit graph: a faint rail, a drawn line scaled by --progress, and a dot per step. */
   .process__steps {
@@ -48,13 +48,13 @@ import { site } from '../content/site';
   .process__step { position: relative; display: grid; gap: var(--space-2); }
   .process__step::before {
     content: ''; position: absolute; left: calc(-1 * var(--space-7) + var(--rail-x) - var(--space-2) + var(--border-w));
-    top: var(--space-1); width: var(--space-4); height: var(--space-4); border-radius: 50%;
+    top: var(--space-1); width: var(--space-4); height: var(--space-4); border-radius: var(--radius-round);
     background: var(--bg-soft); border: var(--focus-w) solid var(--border); z-index: 1;
     transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
   }
   .process__step[data-reached='true']::before { background: var(--focus); border-color: var(--focus); }
   .process__index { font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label); color: var(--muted); }
-  .process__step p { margin: 0; color: var(--muted); max-width: 34rem; }
+  .process__step p { margin: 0; color: var(--muted); max-width: var(--measure-text); }
 
   @media (min-width: 48rem) {
     .process__inner { grid-template-columns: 5fr 7fr; align-items: start; }

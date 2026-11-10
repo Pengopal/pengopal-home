@@ -1,4 +1,6 @@
 ---
+interface Props { /** On pages other than the homepage, section links point back to it. */ base?: '' | '/' }
+const { base = '' } = Astro.props;
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import { site } from '../content/site';
@@ -9,10 +11,10 @@ import { site } from '../content/site';
     <div class="site-header__panel" id="site-menu">
       <nav aria-label={site.a11y.navLabel}>
         <ul class="site-header__links" role="list">
-          {site.nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          {site.nav.map((item) => <li><a href={`${base}${item.href}`}>{item.label}</a></li>)}
         </ul>
       </nav>
-      <a class="btn btn--primary" href={site.hero.primary.href}>{site.hero.primary.label}</a>
+      <a class="btn btn--primary" href={`${base}${site.hero.primary.href}`}>{site.hero.primary.label}</a>
     </div>
     <div class="site-header__tools">
       <ThemeToggle />

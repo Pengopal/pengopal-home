@@ -54,7 +54,7 @@ test('success replaces the form with a thank-you', async ({ page }) => {
 test('400 shows errors under fields, marks them invalid and keeps input', async ({ page }) => {
   await stubTurnstile(page);
   await page.route('**/api/contact', (r) =>
-    r.fulfill({ status: 400, contentType: 'application/json', body: '{"ok":false,"fields":{"email":"Please enter a valid email address."}}' }),
+    r.fulfill({ status: 400, contentType: 'application/json', body: '{"ok":false,"fields":{"email":"server wording"}}' }),
   );
   await page.goto('/');
   const form = await fill(page);
@@ -72,7 +72,7 @@ test('502 shows an error with an email link containing the message', async ({ pa
   await page.goto('/');
   const form = await fill(page);
   await form.getByRole('button', { name: 'Send' }).click();
-  const alert = page.locator('section#contact [role="alert"]');
+  const alert = page.locator('section#contact [data-failed]');
   await expect(alert).toBeVisible();
   const href = await alert.locator('a').getAttribute('href');
   expect(decodeURIComponent(href!)).toContain('A multi-tenant SaaS with SSO.');
@@ -105,4 +105,15 @@ test('if the spam check cannot load, sending is disabled and email is offered', 
   await expect(page.locator('section#contact [data-turnstile-error]')).toBeVisible({ timeout: 6000 });
   await expect(page.locator('section#contact form').getByRole('button', { name: 'Send' })).toBeDisabled();
   await expect(page.locator('section#contact [data-turnstile-error] a[href^="mailto:"]')).toBeVisible();
+});
+
+test("client-side errors use our own wording, not the browser's", async ({ page }) => {
+  await stubTurnstile(page);
+  await page.goto('/');
+  const form = await fill(page);
+  await form.getByLabel('Email').fill('not-an-email');
+  await form.getByRole('button', { name: 'Send' }).click();
+  const email = form.getByLabel('Email');
+  await expect(email).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#e-email')).toHaveText('Please enter a valid email address.');
 });

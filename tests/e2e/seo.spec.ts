@@ -42,6 +42,7 @@ test('404 page is branded with a link home', async ({ page }) => {
   expect(res?.status()).toBe(404);
   await expect(page.locator('h1')).toBeVisible();
   await expect(page.locator('main a[href="/"]')).toBeVisible();
+  await expect(page.locator('header nav a').first()).toHaveAttribute('href', '/#services');
 });
 
 test('robots and sitemap are served', async ({ request }) => {

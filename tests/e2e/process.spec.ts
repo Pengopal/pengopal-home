@@ -36,3 +36,16 @@ test.describe('reduced motion', () => {
     await expect(page.locator('section#how-we-work li[data-reached="true"]')).toHaveCount(4);
   });
 });
+
+test('the line plays once: it does not shrink when scrolling back up', async ({ page }) => {
+  await page.goto('/');
+  const list = page.locator('section#how-we-work ol');
+  await list.scrollIntoViewIfNeeded();
+  await page.mouse.wheel(0, 1600);
+  await page.waitForTimeout(400);
+  const read = () => list.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--progress')));
+  const high = await read();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(400);
+  expect(await read()).toBeGreaterThanOrEqual(high);
+});

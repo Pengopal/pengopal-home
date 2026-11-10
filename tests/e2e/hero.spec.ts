@@ -50,3 +50,26 @@ test('poster stays when the three.js chunk fails', async ({ page }) => {
   await expect(page.locator('canvas[data-codestream]')).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+test.describe('phone width', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+  test('keeps the poster and never loads the 3D chunk', async ({ page }) => {
+    const chunks: string[] = [];
+    page.on('request', (r) => { if (/\/_astro\/mount\./.test(r.url())) chunks.push(r.url()); });
+    await page.goto('/');
+    await page.mouse.move(100, 100);
+    await page.waitForTimeout(4500);
+    await expect(page.locator('svg[data-poster]')).toBeVisible();
+    await expect(page.locator('canvas[data-codestream]')).toBeHidden();
+    expect(chunks).toEqual([]);
+  });
+});
+
+test('desktop does not fetch the 3D chunk before load has settled', async ({ page }) => {
+  const chunks: number[] = [];
+  const start = Date.now();
+  page.on('request', (r) => { if (/\/_astro\/mount\./.test(r.url())) chunks.push(Date.now() - start); });
+  await page.goto('/');
+  await page.waitForTimeout(1500);
+  expect(chunks).toEqual([]);
+});

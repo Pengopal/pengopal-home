@@ -7,8 +7,11 @@ import { prefersReducedMotion } from './reveal';
  */
 export function initCommitLine(list: HTMLOListElement): () => void {
   const steps = [...list.querySelectorAll<HTMLLIElement>(':scope > li')];
+  let shown = 0;
   const set = (progress: number) => {
-    const p = Math.max(0, Math.min(1, progress));
+    // Plays once: the line only ever grows, so scrolling back up never undraws it.
+    const p = Math.max(shown, Math.min(1, progress));
+    shown = p;
     list.style.setProperty('--progress', p.toFixed(3));
     const reachedAt = p * list.offsetHeight;
     steps.forEach((li) => {

@@ -1,5 +1,6 @@
 import { onReveal } from '../motion/reveal';
 import { burst } from '../motion/burst';
+import { site } from '../content/site';
 import { mailtoFallback, submitEnquiry, type EnquiryInput } from './contact-client';
 
 const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
@@ -27,9 +28,11 @@ export function initContact(form: HTMLFormElement): void {
   const refresh = () => { send.disabled = sending || !token; };
 
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | null;
-  const showError = (name: string, msg: string) => {
+  // Our own wording for every field, whatever the browser or the server would say (copy lives in site.ts).
+  const showError = (name: string) => {
+    const msg = site.contact.errors[name as keyof typeof site.contact.errors];
     const input = field(name), err = form.querySelector<HTMLElement>(`#e-${name}`);
-    if (!input || !err) return;
+    if (!input || !err || !msg) return;
     input.setAttribute('aria-invalid', 'true');
     err.textContent = msg;
     err.hidden = false;
@@ -76,7 +79,7 @@ export function initContact(form: HTMLFormElement): void {
     for (const n of FIELDS) {
       const input = field(n);
       if (input && !input.checkValidity()) {
-        showError(n, input.validationMessage);
+        showError(n);
         firstInvalid ??= input;
       }
     }
@@ -109,7 +112,7 @@ export function initContact(form: HTMLFormElement): void {
     (window as TurnstileWindow).turnstile?.reset(widget);
     refresh();
     if (result.kind === 'validation') {
-      Object.entries(result.fields).forEach(([n, msg]) => showError(n, msg));
+      Object.keys(result.fields).forEach((n) => showError(n));
       const first = FIELDS.find((n) => result.fields[n]);
       if (first) field(first)?.focus();
     } else {

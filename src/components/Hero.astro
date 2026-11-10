@@ -63,13 +63,13 @@ const markY = FRAME_H * 0.62 - MARK.w * MARK.tailY;
   .hero__art { position: relative; order: 2; height: var(--hero-band-h); margin-top: var(--space-4); overflow: hidden; }
   /* The frame's top third is empty sky: on phones, pull it above the band so the penguin fills it. */
   .hero__poster, .hero__canvas, .hero__mark { position: absolute; left: 0; width: 100%; top: -40%; height: 140%; }
-  .hero__poster text { font-family: var(--font-mono); font-weight: 600; }
+  .hero__poster text { font-family: var(--font-mono); font-weight: var(--fw-heading); }
   .hero__canvas { display: block; }
   .hero__canvas[hidden], .hero__poster[hidden] { display: none; }
   /* The penguin's navy body needs a hairline on dark backgrounds, like the logo. */
-  :global([data-theme='dark']) .hero__mark { filter: drop-shadow(0 0 1px var(--logo-outline)); }
-  .hero__copy h1 { max-width: 14ch; }
-  .hero__sub { max-width: 40rem; margin: var(--space-5) 0 0; color: var(--muted); font-size: var(--fs-h3); line-height: var(--lh-body); }
+  :global([data-theme='dark']) .hero__mark { filter: drop-shadow(0 0 var(--hairline) var(--logo-outline)); }
+  .hero__copy h1 { max-width: var(--measure-title); }
+  .hero__sub { max-width: var(--measure-wide); margin: var(--space-5) 0 0; color: var(--muted); font-size: var(--fs-h3); line-height: var(--lh-body); }
   .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
 
   /* Wider screens: the art fills the hero behind the copy. */
