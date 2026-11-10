@@ -21,17 +21,23 @@ export function createRng(seed: number): () => number {
 
 /**
  * The wake's curve. u = 0 at the penguin's wake, 1 at the left exit; lane in [-1, 1] spreads the stream.
- * x: 0.78·w → −0.02·w; y: 0.62·h + u²·0.28·h, plus a lane offset that widens downstream.
+ * x: 0.78·w → −0.02·w; y: 0.62·h + u²·0.22·h, plus a lane offset that widens downstream
+ * (up to ±0.098·h) so the stream reads as a ribbon as wide as the wake.
  */
 export function pathPoint(u: number, lane: number, width: number, height: number): { x: number; y: number } {
   const x = width * (0.78 - 0.8 * u);
-  const y = height * (0.62 + u * u * 0.28) + lane * (0.4 + u) * 0.03 * height;
+  const y = height * (0.62 + u * u * 0.22) + lane * (0.4 + u) * 0.07 * height;
   return { x, y };
 }
 
+const SINGLE = GLYPHS.filter((g) => [...g].length === 1);
+const TOKENS = GLYPHS.filter((g) => [...g].length > 1);
+/** Mostly single characters; words and operators are accents (about 1 in 7), so the stream stays light. */
+const TOKEN_SHARE = 0.14;
+
 export function makeGlyphs(count: number, rng: () => number): GlyphSpec[] {
   return Array.from({ length: count }, () => ({
-    char: GLYPHS[Math.floor(rng() * GLYPHS.length)],
+    char: rng() < TOKEN_SHARE ? TOKENS[Math.floor(rng() * TOKENS.length)] : SINGLE[Math.floor(rng() * SINGLE.length)],
     u: rng(),
     lane: rng() * 2 - 1,
     z: -6 + rng() * 8,

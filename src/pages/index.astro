@@ -1,12 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../content/site';
 ---
 <Base title={site.meta.title} description={site.meta.description}>
   <Header />
   <main id="main">
+    <Hero />
     <!-- stub until Task 8 builds the real section -->
     <section id="services" aria-labelledby="services-title" class="stub">
       <h2 id="services-title" class="container">{site.nav[0].label}</h2>

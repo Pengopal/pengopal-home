@@ -50,6 +50,8 @@
   --content-max: 1200px;
   --header-h: 72px;
   --logo-h: 40px;
+  --hero-min: max(36rem, calc(100svh - var(--header-h)));
+  --hero-band-h: 15rem;
 
   /* shape */
   --radius-card: 12px;

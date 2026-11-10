@@ -47,3 +47,17 @@ test('glyph set matches the spec', () => {
     expect(GLYPHS).toContain(c);
   }
 });
+
+test('words are accents, not the bulk of the stream', () => {
+  const gs = makeGlyphs(2000, createRng(3));
+  const words = gs.filter((g) => [...g.char].length > 1).length / gs.length;
+  expect(words).toBeGreaterThan(0.08);
+  expect(words).toBeLessThan(0.2);
+});
+
+test('the ribbon widens downstream', () => {
+  const w = 1280, h = 720;
+  const spread = (u: number) => pathPoint(u, 1, w, h).y - pathPoint(u, -1, w, h).y;
+  expect(spread(0.9)).toBeGreaterThan(spread(0.1) * 2);
+  expect(spread(0.9)).toBeGreaterThan(0.15 * h);
+});
