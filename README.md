@@ -1,88 +1,223 @@
-# pengopal.com
+<div align="center">
 
-The Pengopal company homepage: one static page built with Astro and TypeScript, with a Three.js "code current" hero. A Cloudflare Worker serves the site and handles the contact form.
+<img src="docs/images/readme-card.png" alt="Pengopal" width="600">
 
-- Design spec: `docs/superpowers/specs/2026-11-10-pengopal-homepage-design.md`
-- Implementation plan: `docs/superpowers/plans/2026-11-10-pengopal-homepage.md`
+**The company site for Pengopal, a founder-led studio building web apps, AI features and secure multi-tenant SaaS.**
 
-## Requirements
+<sub><b>Built with</b></sub><br>
 
-Node 22.12 or newer. Astro is pinned to 7.3.8 because Astro 7.4+ needs Node 22.23.4. Once Node is upgraded, bump it with `npm i astro@latest`.
+[![Astro](https://img.shields.io/badge/Astro-bc52ee?logo=astro&logoColor=white)](https://astro.build/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Three.js](https://img.shields.io/badge/Three.js-000000?logo=threedotjs&logoColor=white)](https://threejs.org/)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-f38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
+[![Turnstile](https://img.shields.io/badge/Turnstile-f38020?logo=cloudflare&logoColor=white)](https://www.cloudflare.com/products/turnstile/)
+[![Vitest](https://img.shields.io/badge/Vitest-6e9f18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Playwright](https://img.shields.io/badge/Playwright-2ead33?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![axe](https://img.shields.io/badge/axe-663399?logo=accessibility&logoColor=white)](https://github.com/dequelabs/axe-core)
+[![Lighthouse](https://img.shields.io/badge/Lighthouse-f44b21?logo=lighthouse&logoColor=white)](https://github.com/GoogleChrome/lighthouse-ci)
 
-## Run
+</div>
+
+![The Pengopal homepage](docs/images/hero-light.png)
+
+## What it is
+
+A single page that shows what Pengopal builds. It leads with real work, not borrowed credibility: no stock photos, invented stats, testimonials or client logos. Everything shown is real, or clearly labelled as reserved.
+
+The brand comes straight from the logo. The penguin's opal wake becomes a live 3D stream of code, and the opal colours are sampled from the logo's pixels, never hand-picked.
+
+## Features
+
+### A code stream from the penguin's wake
+
+The hero's opal wake becomes a stream of code characters in real 3D depth (Three.js). The stream tilts with the mouse, and characters ease aside from the cursor.
+
+**The page always paints first.** A server-rendered still of the same stream appears before any JavaScript runs. The 3D starts only after load, on desktop, with motion allowed and WebGL available. Everyone else keeps the still version.
+
+### The Opal Mosaic
+
+The highlighted words and the primary buttons use **Opal Mosaic**, a faceted texture generated from the real pixels of the logo's "opal" letters.
+
+- A test checks that 95% of the texture reaches 3:1 contrast on white and on navy.
+- A gradient fallback keeps the text visible if the texture never loads.
+
+The primary button is navy with white text (15.5:1) and a drifting mosaic border.
+
+![Dark mode](docs/images/hero-dark.png)
+
+### What we've built
+
+A feature band for the studio's own products. It currently shows [**Tenantry**](https://github.com/mfurqanwork/tenantry-keycloak-multitenancy), multi-tenant sign-in on Keycloak, with:
+
+- real screenshots;
+- facts taken only from its README;
+- links to the [live demo](https://tenantry.pengopal.com) and the code.
+
+Projects are typed data in `src/content/site.ts`, so the next one is a data entry, not a redesign.
+
+![What we've built](docs/images/work.png)
+
+### Services, as small scenes
+
+Each service has a small scene that plays once when it scrolls into view:
+
+- an app window shipping to production;
+- an assistant answering from a document;
+- tenants wired through one guard.
+
+The scenes are decorative and hidden from assistive technology. The headings and lists carry the meaning.
+
+![Services](docs/images/services.png)
+
+### How we work
+
+A showcase timeline: horizontal on desktop, vertical on phones. Its opal rail draws as you scroll, only ever grows, and survives a resize across the breakpoint.
+
+![How we work](docs/images/process.png)
+
+### A contact form that never loses an enquiry
+
+A quiet band opens the form in a native dialog. The Cloudflare Turnstile spam check loads only when the dialog first opens.
+
+The form is a Cloudflare Worker. It:
+
+- validates every field;
+- rejects line breaks in header fields (no email header injection);
+- counts characters the way people do (one emoji is one character);
+- emails the enquiry to the owner's inbox.
+
+On any failure, the visitor gets a ready-filled email link instead. Without JavaScript, the form folds out in the band.
+
+<p align="center"><img src="docs/images/contact-dialog.png" alt="The contact dialog" width="640"> <img src="docs/images/phone.png" alt="The page on a phone" width="180"></p>
+
+## Quality
+
+Every promise is an automated check:
+
+| Check | Tool | Result |
+| --- | --- | --- |
+| Logic: contact Worker, copy rules, logo colours, mosaic contrast, timeline maths | Vitest | 75 tests |
+| Behaviour in Chromium, Firefox and WebKit, including phone width, reduced motion, no JavaScript and dark mode | Playwright | 230 tests |
+| Accessibility: WCAG 2.1 AA in light and dark, keyboard order, visible focus | axe + Playwright | 0 violations |
+| Speed on a mid-range phone | Lighthouse CI | 96 performance · 100 accessibility · 100 best practices · 100 SEO |
+| Types | `astro check` + `tsc` | 0 errors |
+
+**Copy rules** are enforced by tests. Nothing on the page may mention time zones, promise a reply time, or link to GitHub, except a project's own repository.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  browser([Visitor]) --> worker
+
+  subgraph cf[Cloudflare]
+    direction TB
+    worker["Worker<br/>static assets + /api/contact"]
+    assets[("Astro build<br/>dist/")]
+    turnstile["Turnstile<br/>siteverify"]
+    email["Email Service<br/>send_email binding"]
+  end
+
+  worker -- "GET /" --> assets
+  worker -- "POST /api/contact" --> turnstile
+  worker --> email --> inbox([Owner's inbox])
+```
+
+- **The page is static.** Astro renders everything at build time. JavaScript adds only the 3D stream, motion, the dialog and the form.
+- **One Worker** serves the assets and handles `POST /api/contact`. The handler is a pure function with injected Turnstile and mail dependencies, so it is unit-tested without Cloudflare.
+- **Secrets never live in the repository:** `TURNSTILE_SECRET` and `CONTACT_TO` are Worker secrets.
+
+## Where things live
+
+| What | Where |
+| --- | --- |
+| All page text, links and project data | `src/content/site.ts` |
+| Colours, type, spacing, motion, the mosaic | `src/styles/tokens.css` |
+| Shared styles (buttons, opal text, focus ring) | `src/styles/global.css` |
+| One component per section, plus the service scenes | `src/components/`, `src/components/scenes/` |
+| The 3D code stream (the only file that imports three.js) | `src/codestream/mount.ts` |
+| Motion helpers (reveal, scenes, timeline rail) | `src/motion/` |
+| Contact form server side | `worker/` |
+| Brand asset generators | `scripts/` |
+| Design specs and implementation plans | `docs/superpowers/` |
+
+## Try it locally
+
+You need Node 22.12 or newer. Astro is pinned to 7.3.8, because 7.4+ needs Node 22.23.4.
 
 ```bash
 npm install
-npm run dev          # http://localhost:4321
 ```
 
-The contact form needs the Worker. To run it locally, build first and then run the Worker:
+```bash
+npm run dev
+```
+
+Then open <http://localhost:4321>. The contact form needs the Worker; to run it locally:
 
 ```bash
 npm run build && npx wrangler dev
 ```
 
-## Where things live
-
-| What | File |
-|---|---|
-| All page text, links, form wording | `src/content/site.ts` |
-| Colours, type, spacing, motion | `src/styles/tokens.css` |
-| Shared styles (buttons, focus ring, sections) | `src/styles/global.css` |
-| Logo (light and dark) | `public/brand/logo-light.svg`, `public/brand/logo-dark.svg` |
-| One component per section | `src/components/` |
-| 3D code stream (only file importing three.js) | `src/codestream/mount.ts` |
-| Contact form server side | `worker/` |
-
-To edit copy, change `site.ts` only. The tests block a few things that must never appear on the site: Pakistan or time zones, GitHub links, and reply-time promises.
-
-## Build and test
+### Tests
 
 ```bash
-npm run check        # astro check + TypeScript
-npm test             # unit tests (Vitest)
-npm run build
-npm run test:e2e     # browser tests in Chromium, Firefox and WebKit (uses the built site)
-npm run lhci         # Lighthouse, mobile: 95+ in all four categories
-node scripts/screenshots.mjs   # light, dark and phone screenshots into screenshots/
+npx playwright install chromium firefox webkit
 ```
-
-Run `npx playwright install chromium firefox webkit` once before the browser tests.
-
-## Regenerating brand assets
 
 ```bash
-npm run assets                     # dark logo + share image (public/og.png) from logo-light.svg
-node scripts/sample-palette.mjs    # code-stream colours, sampled from ../Brand Assets/Brand_logo_original.jpg
+npm run check && npm test
 ```
 
-The stream colours are always sampled from the logo, never picked by hand.
+```bash
+npm run build && npm run test:e2e && npm run lhci
+```
+
+### Brand assets
+
+All of these are generated, never hand-edited:
+
+```bash
+npm run assets                      # Opal Mosaic texture, dark logo, share image
+```
+
+```bash
+node scripts/sample-palette.mjs     # code-stream colours, sampled from the logo
+```
+
+```bash
+node scripts/import-tenantry.mjs    # Tenantry logo and screenshots
+```
+
+```bash
+node scripts/readme-images.mjs      # the images in this README
+```
 
 ## Deploy (Cloudflare Workers)
 
-These steps need your Cloudflare login, so they're yours to run.
-
-1. **Turnstile (spam check).** In the Cloudflare dashboard, go to Turnstile and add a widget for `pengopal.com` in Managed mode. Put the site key in a `.env` file in this folder:
-   ```
-   PUBLIC_TURNSTILE_SITE_KEY=your-site-key
-   ```
-   Without it, the site uses Cloudflare's always-pass test key, which is fine locally and wrong in production.
-2. **Secrets.** These are never committed:
+1. **Turnstile.** Create a widget for `pengopal.com` (Managed mode) and put its site key in `.env` as `PUBLIC_TURNSTILE_SITE_KEY`.
+2. **Secrets.**
    ```bash
-   npx wrangler secret put TURNSTILE_SECRET   # the widget's secret key
-   npx wrangler secret put CONTACT_TO         # the inbox that receives enquiries
+   npx wrangler secret put TURNSTILE_SECRET
    ```
-   `CONTACT_TO` must be a **verified destination address** in Email Routing. That's the inbox hello@pengopal.com already forwards to. Sending to a verified address is free.
-3. **Email Routing.** Check that it's enabled for pengopal.com. Enquiries are sent from `website@pengopal.com`, with reply-to set to the visitor.
-4. **Deploy.**
+   ```bash
+   npx wrangler secret put CONTACT_TO
+   ```
+   `CONTACT_TO` must be a verified destination address in Email Routing.
+3. **Deploy.**
    ```bash
    npm run deploy
    ```
-   This refuses to deploy if `PUBLIC_TURNSTILE_SITE_KEY` is missing or is the test key. With the test key, every enquiry would be rejected and you'd never know. Use `npm run deploy` rather than calling `wrangler deploy` directly.
-5. **Domains.** In the Worker's settings, add `pengopal.com` and `www.pengopal.com` as custom domains, and redirect `www` to the apex with a redirect rule.
+   This refuses to deploy without a real site key. Cloudflare's always-pass test key would make every enquiry fail without anyone noticing.
+4. **Domains.** Add `pengopal.com` and `www.pengopal.com` as custom domains on the Worker, and redirect `www` to the apex.
 
-### After the first deploy
+After the first deploy, send one real enquiry through the form and check it arrives.
 
-Send one real enquiry through the form and check that it arrives. If it lands in spam, mark `website@pengopal.com` as a safe sender in your inbox.
+## Roadmap
 
-If sending ever fails, visitors see a "didn't send" message with a ready-filled email link, so no enquiry is lost.
+| Phase | Delivers | Status |
+| --- | --- | --- |
+| v1 | Brand, the code-stream hero, services, process, contact Worker, SEO, quality gates | Done |
+| v2 | Opal Mosaic brand style, Tenantry showcase, service scenes, showcase timeline, contact dialog | Done |
+| Launch | Turnstile keys, secrets, first deploy to pengopal.com, a real test enquiry | Next |
+| Later | More projects in What we've built; a dark-mode treatment for the feature band | Later |
