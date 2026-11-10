@@ -31,7 +31,9 @@ export interface Site {
     timelines: typeof TIMELINES;
     turnstileSiteKey: string;
   };
-  footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26' };
+  footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26'; linkedinLabel: string };
+  notFound: { title: string; heading: string; body: string; home: string };
+  a11y: { skip: string };
 }
 
 const SUB =
@@ -118,5 +120,13 @@ export const site: Site = {
   footer: {
     company: 'Pengopal Technologies',
     linkedin: 'https://www.linkedin.com/in/furqan26',
+    linkedinLabel: 'LinkedIn',
   },
+  notFound: {
+    title: 'Page not found — Pengopal',
+    heading: 'This page swam off.',
+    body: 'The link may be old, or the address mistyped.',
+    home: 'Back to the homepage',
+  },
+  a11y: { skip: 'Skip to content' },
 };
