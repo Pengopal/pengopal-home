@@ -1,0 +1,63 @@
+---
+import { site } from '../content/site';
+---
+<section id="how-we-work" class="section process" aria-labelledby="process-title">
+  <div class="container process__inner">
+    <div class="process__intro">
+      <h2 id="process-title">{site.sections.process}</h2>
+      <p class="process__note">{site.process.note}</p>
+    </div>
+    <ol class="process__steps" role="list" data-commit-line>
+      {site.process.steps.map((step, i) => (
+        <li class="process__step">
+          <span class="process__index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{step.title}</h3>
+          <p>{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { initCommitLine } from '../motion/commitLine';
+  const list = document.querySelector<HTMLOListElement>('[data-commit-line]');
+  if (list) initCommitLine(list);
+</script>
+
+<style>
+  .process { background: var(--bg-soft); }
+  .process__inner { display: grid; gap: var(--space-7); }
+  .process__note { margin: var(--space-4) 0 0; color: var(--muted); max-width: 32rem; }
+
+  /* The commit graph: a faint rail, a drawn line scaled by --progress, and a dot per step. */
+  .process__steps {
+    --progress: 1; /* no-JS default: the line is complete */
+    --rail-x: var(--space-2);
+    position: relative; margin: 0; padding: 0 0 0 var(--space-7); list-style: none;
+    display: grid; gap: var(--space-7);
+  }
+  .process__steps::before, .process__steps::after {
+    content: ''; position: absolute; left: var(--rail-x); top: var(--space-2); bottom: var(--space-2);
+    width: var(--focus-w); border-radius: var(--focus-w);
+  }
+  .process__steps::before { background: var(--border); }
+  .process__steps::after {
+    background: var(--opal-deep); transform-origin: top; transform: scaleY(var(--progress));
+  }
+  .process__step { position: relative; display: grid; gap: var(--space-2); }
+  .process__step::before {
+    content: ''; position: absolute; left: calc(-1 * var(--space-7) + var(--rail-x) - var(--space-2) + var(--border-w));
+    top: var(--space-1); width: var(--space-4); height: var(--space-4); border-radius: 50%;
+    background: var(--bg-soft); border: var(--focus-w) solid var(--border); z-index: 1;
+    transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  }
+  .process__step[data-reached='true']::before { background: var(--focus); border-color: var(--focus); }
+  .process__index { font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label); color: var(--muted); }
+  .process__step p { margin: 0; color: var(--muted); max-width: 34rem; }
+
+  @media (min-width: 48rem) {
+    .process__inner { grid-template-columns: 5fr 7fr; align-items: start; }
+    .process__intro { position: sticky; top: calc(var(--header-h) + var(--space-6)); }
+  }
+</style>
