@@ -20,7 +20,15 @@
   --opal-light: linear-gradient(90deg, #6fe0f2, #8fa8ff, #d3a6ff, #ffb6d3, #ffe2a6, #8df0cf);
   /* Deep opal, darkened at both ends so every stop is ≥3:1 on white (WCAG 1.4.3, large text). */
   --opal-deep: linear-gradient(90deg, #1789ad, #5f6bff, #a35cff, #d14a87);
-  --opal-text: var(--opal-deep);
+  /* Opal Mosaic (spec v2 §2): generated from the logo by scripts/make-opal-mosaic.mjs — never hand-edit. */
+  --opal-mosaic: url('/brand/opal-mosaic.webp');
+  --opal-mosaic-size-text: 420px;
+  --opal-mosaic-size-border: 240px;
+  /* Deepened on light backgrounds so 95% of the texture reaches 3:1 on white (tested). */
+  --opal-mosaic-dim: brightness(0.7) saturate(1.25);
+  --opal-drift: 24s;
+  --opal-glow: rgb(86 175 233 / 35%); /* #56afe9, a colour of the logo's opal */
+  --btn-mosaic-w: 2.5px;
 
   /* type */
   --font-heading: 'Lexend', system-ui, sans-serif;
@@ -91,7 +99,7 @@
   --focus: #8fa8ff;
   --error: #ff9a8f;
   --logo-outline: #c9d3f5;
-  --opal-text: var(--opal-light);
+  --opal-mosaic-dim: none;
   color-scheme: dark;
 }
 

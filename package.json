@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "lhci": "lhci autorun",
-    "assets": "node scripts/make-dark-logo.mjs && node scripts/make-og.mjs",
+    "assets": "node scripts/make-opal-mosaic.mjs && node scripts/make-dark-logo.mjs && node scripts/make-og.mjs",
     "deploy": "node scripts/check-deploy-env.mjs && astro build && wrangler deploy"
   },
   "dependencies": {
