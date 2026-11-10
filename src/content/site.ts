@@ -11,7 +11,6 @@ export interface Service {
   title: string;
   outcome: string;
   deliverables: string[];
-  icon: 'brackets' | 'spark' | 'key';
 }
 
 export interface SectionHeading { eyebrow: string; title: string; highlight: string }
@@ -36,6 +35,12 @@ export interface Site {
   nav: { label: string; href: Anchor }[];
   hero: { lead: string; highlight: string; sub: string; primary: Cta; secondary: Cta };
   services: Service[];
+  /** Words shown inside the decorative service scenes (aria-hidden; illustrative only). */
+  scenes: {
+    web: { chip: string };
+    ai: { question: string; answerLead: string; answerHighlight: string; answerTail: string };
+    identity: { tenants: string[]; enterprise: string; guard: string };
+  };
   projects: Project[];
   sections: { work: SectionHeading; services: SectionHeading; process: SectionHeading; nextProject: string };
   process: { steps: { title: string; body: string }[]; note: string };
@@ -91,23 +96,25 @@ export const site: Site = {
       title: 'Web apps & SaaS',
       outcome: 'Product-ready web apps, from first screen to production deploy.',
       deliverables: ['React + TypeScript frontends', 'NestJS or FastAPI backends', 'Postgres and Docker deploys'],
-      icon: 'brackets',
     },
     {
       id: 'ai',
       title: 'AI features',
       outcome: 'AI that answers from your own data, not guesses.',
       deliverables: ['RAG search over your documents', 'Chat assistants', 'Document extraction, including Arabic'],
-      icon: 'spark',
     },
     {
       id: 'identity',
       title: 'Identity & multi-tenant SaaS',
       outcome: 'Sign-in, tenants and permissions done right from day one.',
       deliverables: ['Keycloak SSO', 'Organizations and role-based access', 'Enterprise SSO for your customers'],
-      icon: 'key',
     },
   ],
+  scenes: {
+    web: { chip: '<App /> → prod' },
+    ai: { question: "What's our refund policy?", answerLead: 'Refunds within', answerHighlight: '30 days', answerTail: ', per section 4.2' },
+    identity: { tenants: ['acme', 'globex', 'initech', 'umbrella', 'soylent'], enterprise: 'ent', guard: 'one guard' },
+  },
   projects: [
     {
       id: 'tenantry',

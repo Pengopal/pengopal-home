@@ -48,6 +48,17 @@
   --float-y: 6px;
   --float-dur: 8s;
 
+  /* Service scenes (spec v2 §3.2). */
+  --scene-h: 9.5rem;
+  --scene-shadow: 0 10px 24px rgb(18 34 74 / 10%);
+  --scene-line: #e6e9f3;
+  --tile: 2.25rem;
+  --tile-w: 3.5rem;
+  /* Navy parts inside scenes; lifted in dark mode so they don't vanish on the dark card. */
+  --scene-ink: var(--ink);
+  --guard: 5.5rem;
+  --fs-tiny: 0.6875rem;
+
   /* type */
   --font-heading: 'Lexend', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
@@ -117,6 +128,7 @@
   --focus: #8fa8ff;
   --error: #ff9a8f;
   --logo-outline: #c9d3f5;
+  --scene-ink: #2a3d78;
   --opal-mosaic-dim: none;
   color-scheme: dark;
 }

@@ -14,14 +14,12 @@ import { site } from '../content/site';
 
 <script>
   import { onReveal, prefersReducedMotion } from '../motion/reveal';
-  import { assembleInto } from '../motion/assemble';
+  import { playScene } from '../motion/scenes';
 
-  for (const card of document.querySelectorAll<HTMLElement>('#services .service')) {
-    const icon = card.querySelector<SVGSVGElement>('svg.service__icon');
-    if (!icon) continue;
-    // Hide the icon only when JS is running and motion is allowed; without JS it simply shows.
-    if (!prefersReducedMotion()) card.dataset.pending = 'true';
-    onReveal(card, () => assembleInto(card, icon), { threshold: 0.4 });
+  for (const scene of document.querySelectorAll<HTMLElement>('#services [data-scene]')) {
+    // Hold the moving parts back only when JS runs and motion is allowed; otherwise the final frame shows.
+    if (!prefersReducedMotion()) scene.dataset.pending = 'true';
+    onReveal(scene, () => playScene(scene), { threshold: 0.4 });
   }
 </script>
 

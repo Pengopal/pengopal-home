@@ -96,3 +96,8 @@ section[id] { scroll-margin-top: var(--header-h); }
   margin: 0 0 var(--space-3); font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label);
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
 }
+
+/* Service scene motion (spec v2 §3.2); stopped under reduced motion in ServiceCard. */
+@keyframes scene-drift { to { background-position: calc(-1 * var(--opal-mosaic-size-border)) 0; } }
+@keyframes scene-pulse { 50% { opacity: 0.35; } }
+@keyframes scene-dash { to { background-position: var(--space-3) 0; } }

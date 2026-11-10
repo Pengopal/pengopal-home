@@ -1,0 +1,42 @@
+---
+import { site } from '../../content/site';
+const id = site.scenes.identity;
+// Six tiles: the Enterprise tenant sits third, in opal.
+const tiles = [id.tenants[0], id.tenants[1], id.enterprise, id.tenants[2], id.tenants[3], id.tenants[4]];
+---
+<div class="scene scene--identity" aria-hidden="true" data-scene>
+  <div class="tiles">
+    {tiles.map((t, i) => <span class={t === id.enterprise ? 'tile tile--ent' : 'tile'} data-step={i + 1}>{t}</span>)}
+  </div>
+  <span class="wire"></span>
+  <span class="guard" data-step="7">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round">
+      <path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z" />
+    </svg>
+    {id.guard}
+  </span>
+</div>
+
+<style>
+  .tiles { position: absolute; left: var(--space-5); top: var(--space-5); display: grid; grid-template-columns: repeat(3, var(--tile-w)); gap: var(--space-2); }
+  .tile {
+    width: var(--tile-w); height: var(--tile); display: grid; place-items: center;
+    background: var(--white); border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    font-family: var(--font-mono); font-size: var(--fs-tiny); color: var(--ink);
+    transition: border-color var(--dur-1) var(--ease-out);
+  }
+  .tile--ent { background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-border) auto; border-color: transparent; font-weight: var(--fw-heading); }
+  .wire {
+    position: absolute; left: calc(var(--space-5) + 3 * var(--tile-w) + 2 * var(--space-2) + var(--space-3)); right: calc(var(--space-5) + var(--guard) + var(--space-3));
+    top: calc(var(--space-5) + var(--tile) + var(--space-1)); height: var(--focus-w);
+    background: repeating-linear-gradient(90deg, var(--muted) 0 var(--space-2), transparent var(--space-2) var(--space-3));
+    animation: scene-dash var(--dur-2) linear infinite;
+  }
+  .guard {
+    position: absolute; right: var(--space-5); top: var(--space-5); width: var(--guard); height: var(--guard);
+    border-radius: var(--radius-card); background: var(--scene-ink); color: var(--white);
+    display: grid; place-items: center; align-content: center; gap: var(--space-1);
+    font-size: var(--fs-tiny); text-align: center;
+  }
+  .guard svg { width: var(--space-6); height: var(--space-6); }
+</style>
