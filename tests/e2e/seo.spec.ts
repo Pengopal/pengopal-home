@@ -28,13 +28,16 @@ test('JSON-LD parses and describes the organization', async ({ page }) => {
   expect(ld.email).toBe('hello@pengopal.com');
 });
 
-test('footer has no github link and the current year', async ({ page }) => {
+test('footer has no GitHub link and the current year; the only GitHub link is Tenantry's repo', async ({ page }) => {
   await page.goto('/');
   const footer = page.locator('footer');
   await expect(footer).toContainText(`© ${new Date().getFullYear()} Pengopal Technologies`);
   await expect(footer.locator('a[href="mailto:hello@pengopal.com"]')).toBeVisible();
   await expect(footer.locator('a[href="https://www.linkedin.com/in/furqan26"]')).toHaveAttribute('rel', /me/);
-  await expect(page.locator('a[href*="github"]')).toHaveCount(0);
+  await expect(footer.locator('a[href*="github"]')).toHaveCount(0);
+  // The only GitHub link on the page is Tenantry's own public repository (Furqan: "Link both").
+  await expect(page.locator('a[href*="github"]')).toHaveCount(1);
+  await expect(page.locator('a[href*="github"]')).toHaveAttribute('href', 'https://github.com/mfurqanwork/tenantry-keycloak-multitenancy');
 });
 
 test('404 page is branded with a link home', async ({ page }) => {
