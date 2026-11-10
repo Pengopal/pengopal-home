@@ -44,6 +44,8 @@ try {
 } finally {
   await browser.close();
   server.kill();
+  // Astro allows one preview server per project; make sure ours is gone so tests can start theirs.
+  await new Promise((r) => spawn('npx', ['astro', 'preview', 'stop'], { shell: true, stdio: 'ignore' }).on('exit', r));
 }
 console.log(`screenshots written to ${out}/`);
 process.exit(0);
