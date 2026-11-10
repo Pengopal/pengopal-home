@@ -1,0 +1,20 @@
+---
+// The Pengopal lockup. Swap the files in public/brand/ to change the logo everywhere (spec §4).
+// Intrinsic size comes from the SVG viewBox (2361×600); CSS sets the rendered height.
+---
+<span class="logo">
+  <img class="logo__img logo__img--light" src="/brand/logo-light.svg" alt="Pengopal" width="2361" height="600" decoding="async" />
+  <img class="logo__img logo__img--dark" src="/brand/logo-dark.svg" alt="Pengopal" width="2361" height="600" decoding="async" />
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; }
+  .logo__img { height: var(--logo-h); width: auto; display: block; }
+  .logo__img--dark { display: none; }
+  :global([data-theme='dark']) .logo__img--light { display: none; }
+  :global([data-theme='dark']) .logo__img--dark {
+    display: block;
+    /* the SVG's own outline is sized for large renders; this keeps a hairline at header size */
+    filter: drop-shadow(0 0 0.75px var(--logo-outline));
+  }
+</style>
