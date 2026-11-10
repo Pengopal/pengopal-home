@@ -1,0 +1,43 @@
+{
+  "name": "pengopal-web",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "lhci": "lhci autorun",
+    "assets": "node scripts/make-opal-mosaic.mjs && node scripts/make-dark-logo.mjs && node scripts/make-og.mjs",
+    "deploy": "node scripts/check-deploy-env.mjs && astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/lexend": "^5.3.0",
+    "astro": "7.3.8",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.65.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/culori": "^4.0.1",
+    "@types/three": "^0.187.0",
+    "culori": "^4.0.2",
+    "jsdom": "^29.1.1",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.160.0"
+  }
+}

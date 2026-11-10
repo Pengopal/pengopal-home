@@ -1,0 +1,40 @@
+---
+import { site } from '../../content/site';
+---
+<div class="scene scene--web" aria-hidden="true" data-scene>
+  <div class="win">
+    <div class="win__bar"></div>
+    <div class="win__side"><i></i><i></i><i></i><i></i></div>
+    <div class="win__main">
+      <div class="win__card"></div>
+      <i data-step="1"></i>
+      <i class="w70" data-step="2"></i>
+      <i class="w85" data-step="3"></i>
+    </div>
+  </div>
+  <span class="chip" data-step="4">{site.scenes.web.chip}</span>
+</div>
+
+<style>
+  .win {
+    position: absolute; left: var(--space-5); right: var(--space-5); top: var(--space-5); bottom: calc(-1 * var(--space-3));
+    background: var(--white); border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+    box-shadow: var(--scene-shadow);
+  }
+  .win__bar { height: var(--space-4); border-bottom: var(--border-w) solid var(--border); }
+  .win__side { position: absolute; left: var(--space-3); top: var(--space-6); width: var(--space-7); display: grid; gap: var(--space-2); }
+  .win__main { position: absolute; left: var(--space-9); right: var(--space-3); top: var(--space-6); display: grid; gap: var(--space-2); }
+  .win__side i, .win__main i { display: block; height: var(--space-2); border-radius: var(--space-1); background: var(--scene-line); }
+  .win__main .w70 { width: 70%; }
+  .win__main .w85 { width: 85%; }
+  .win__card {
+    height: var(--space-7); border-radius: var(--radius-control);
+    background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-border) auto;
+    animation: scene-drift var(--opal-drift) linear infinite;
+  }
+  .chip {
+    position: absolute; right: var(--space-4); bottom: var(--space-4);
+    font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label);
+    background: var(--scene-ink); color: var(--terminal-text); border-radius: var(--radius-control); padding: var(--space-1) var(--space-2);
+  }
+</style>

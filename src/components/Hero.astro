@@ -1,0 +1,82 @@
+---
+import { site } from '../content/site';
+import { createRng, makeGlyphs, pathPoint } from '../codestream/stream';
+
+// The server-rendered poster: the same stream, frozen, in the same 1280×720 frame the 3D uses.
+// It is the first paint (spec §5) and stays for no-JS, reduced motion and any 3D failure.
+const FRAME_W = 1280, FRAME_H = 720, BASE_SIZE = 18, DEPTH_UNIT = 70, CAM = FRAME_H / 2 / Math.tan((40 * Math.PI) / 360);
+const poster = makeGlyphs(220, createRng(7)).map((g) => {
+  const pt = pathPoint(g.u, g.lane, FRAME_W, FRAME_H);
+  const scale = CAM / (CAM - g.z * DEPTH_UNIT);
+  const ends = Math.min(1, g.u / 0.08, (1 - g.u) / 0.2);
+  return {
+    char: g.char,
+    x: (pt.x - FRAME_W / 2) * scale + FRAME_W / 2,
+    y: (pt.y - FRAME_H / 2) * scale + FRAME_H / 2,
+    size: BASE_SIZE * 0.82 * scale,
+    color: g.color,
+    opacity: Math.max(0, ends) * (0.35 + 0.65 * ((g.z + 6) / 8)),
+  };
+});
+// The penguin's wake tail sits where the stream starts, at (0.78·w, 0.62·h) of the frame.
+const MARK = { w: 270, tailX: 0.016, tailY: 0.79 };
+const markX = FRAME_W * 0.78 - MARK.w * MARK.tailX;
+const markY = FRAME_H * 0.62 - MARK.w * MARK.tailY;
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__art" aria-hidden="true">
+    <svg class="hero__poster" data-poster viewBox={`0 0 ${FRAME_W} ${FRAME_H}`} preserveAspectRatio="xMaxYMid slice">
+      {poster.map((g) => (
+        <text x={g.x.toFixed(1)} y={g.y.toFixed(1)} font-size={g.size.toFixed(1)} fill={g.color} fill-opacity={g.opacity.toFixed(2)}>{g.char}</text>
+      ))}
+    </svg>
+    <canvas class="hero__canvas" data-codestream hidden></canvas>
+    <svg class="hero__mark" viewBox={`0 0 ${FRAME_W} ${FRAME_H}`} preserveAspectRatio="xMaxYMid slice">
+      <image data-href="/brand/mark.svg" x={markX.toFixed(1)} y={markY.toFixed(1)} width={MARK.w} height={MARK.w} />
+    </svg>
+  </div>
+
+  <div class="container hero__copy">
+    <h1 id="hero-title">{site.hero.lead} <span class="opal-text">{site.hero.highlight}</span></h1>
+    <p class="hero__sub">{site.hero.sub}</p>
+    <div class="hero__actions">
+      <a class="btn btn--primary" href={site.hero.primary.href}>{site.hero.primary.label}</a>
+      <a class="btn btn--secondary" href={site.hero.secondary.href}>{site.hero.secondary.label}</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { loadHeroArt, startCodeStream } from '../scripts/hero';
+  loadHeroArt();
+  startCodeStream();
+</script>
+
+<style>
+  /* Phones first: the art is its own band under the copy, so it never sits behind text. */
+  .hero {
+    position: relative; isolation: isolate; overflow: hidden;
+    margin-top: calc(-1 * var(--header-h)); /* run under the transparent header */
+    padding-top: calc(var(--header-h) + var(--space-7));
+    display: flex; flex-direction: column;
+  }
+  .hero__copy { position: relative; order: 1; }
+  .hero__art { position: relative; order: 2; height: var(--hero-band-h); margin-top: var(--space-4); overflow: hidden; }
+  /* The frame's top third is empty sky: on phones, pull it above the band so the penguin fills it. */
+  .hero__poster, .hero__canvas, .hero__mark { position: absolute; left: 0; width: 100%; top: -40%; height: 140%; }
+  .hero__poster text { font-family: var(--font-mono); font-weight: var(--fw-heading); }
+  .hero__canvas { display: block; }
+  .hero__canvas[hidden], .hero__poster[hidden] { display: none; }
+  /* The penguin's navy body needs a hairline on dark backgrounds, like the logo. */
+  :global([data-theme='dark']) .hero__mark { filter: drop-shadow(0 0 var(--hairline) var(--logo-outline)); }
+  .hero__copy h1 { max-width: var(--measure-title); }
+  .hero__sub { max-width: var(--measure-wide); margin: var(--space-5) 0 0; color: var(--muted); font-size: var(--fs-h3); line-height: var(--lh-body); }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+
+  /* Wider screens: the art fills the hero behind the copy. */
+  @media (min-width: 48rem) {
+    .hero { min-height: var(--hero-min); padding-top: calc(var(--header-h) + var(--space-8)); padding-bottom: var(--space-9); }
+    .hero__art { position: absolute; inset: 0; height: auto; margin: 0; z-index: -1; }
+    .hero__poster, .hero__canvas, .hero__mark { top: 0; height: 100%; }
+  }
+</style>

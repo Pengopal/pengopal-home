@@ -1,0 +1,42 @@
+---
+import type { Service } from '../content/site';
+import SceneWeb from './scenes/SceneWeb.astro';
+import SceneAI from './scenes/SceneAI.astro';
+import SceneIdentity from './scenes/SceneIdentity.astro';
+
+interface Props { service: Service }
+const { service } = Astro.props;
+const Scene = { web: SceneWeb, ai: SceneAI, identity: SceneIdentity }[service.id];
+---
+<article class="service" aria-labelledby={`service-${service.id}`}>
+  <div class="service__viz"><Scene /></div>
+  <div class="service__body">
+    <h3 id={`service-${service.id}`}>{service.title}</h3>
+    <p class="service__outcome">{service.outcome}</p>
+    <ul class="service__list">
+      {service.deliverables.map((d) => <li>{d}</li>)}
+    </ul>
+  </div>
+</article>
+
+<style>
+  .service {
+    display: flex; flex-direction: column; overflow: hidden; background: var(--surface);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+  }
+  .service__viz {
+    position: relative; height: var(--scene-h); overflow: hidden;
+    background: var(--bg-soft); border-bottom: var(--border-w) solid var(--border);
+  }
+  .service__body { display: grid; gap: var(--space-2); padding: var(--space-5); }
+  .service__outcome { margin: 0; color: var(--muted); }
+  .service__list { margin: var(--space-2) 0 0; padding-left: var(--space-5); display: grid; gap: var(--space-1); }
+
+  /* Scene behaviour shared by all three scenes. */
+  .service :global(.scene) { position: absolute; inset: 0; }
+  .service :global(.scene[data-pending] [data-step]:not([data-on])) { visibility: hidden; opacity: 0; }
+  .service :global(.scene [data-step]) { transition: opacity var(--dur-1) var(--ease-out); }
+  @media (prefers-reduced-motion: reduce) {
+    .service :global(.scene *) { animation: none !important; }
+  }
+</style>

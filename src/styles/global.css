@@ -1,0 +1,111 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+/* The hidden attribute always wins over component display rules. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-heading); font-weight: var(--fw-heading); margin: 0; }
+h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--ls-h1); }
+h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); }
+h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+
+:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+
+section[id] { scroll-margin-top: var(--header-h); }
+
+.container { width: min(100% - 2 * var(--gutter), var(--content-max)); margin-inline: auto; }
+
+.opal-text {
+  /* The gradient underneath gives the clipped text a fill until (or if) the texture never arrives. */
+  background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-text) auto, var(--opal-text-fallback);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: var(--opal-mosaic-dim);
+  animation: opal-drift var(--opal-drift) linear infinite;
+}
+@keyframes opal-drift { to { background-position: calc(-1 * var(--opal-mosaic-size-text)) 0; } }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip-link { position: absolute; left: var(--space-4); top: calc(-1 * var(--space-9)); z-index: 100;
+  background: var(--surface); color: var(--text); padding: var(--space-2) var(--space-4); border-radius: var(--radius-control); }
+.skip-link:focus { top: var(--space-4); }
+
+/* Shared buttons (agreed with Furqan 2026-11-10). <a> for navigation, <button> for actions. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--space-7); padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-control); border: var(--border-w) solid transparent;
+  font-family: var(--font-body); font-size: var(--fs-body); font-weight: var(--fw-strong); line-height: 1;
+  text-decoration: none; cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out);
+}
+.btn--primary {
+  /* Navy with white text (15.5:1), framed by a drifting opal-mosaic border (spec v2 §2). */
+  background-color: var(--ink);
+  background-image: linear-gradient(var(--ink), var(--ink)), var(--opal-mosaic);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  background-size: auto, var(--opal-mosaic-size-border) auto;
+  border: var(--btn-mosaic-w) solid transparent;
+  color: var(--white);
+  animation: btn-mosaic-drift var(--opal-drift) linear infinite;
+}
+.btn--primary:hover { box-shadow: 0 var(--space-2) var(--space-5) var(--opal-glow); }
+@keyframes btn-mosaic-drift { to { background-position: 0 0, calc(-1 * var(--opal-mosaic-size-border)) 0; } }
+@media (prefers-reduced-motion: reduce) { .opal-text, .btn--primary { animation: none; } }
+.btn--secondary { background: transparent; color: var(--text); border-color: var(--border); }
+.btn--secondary:hover { border-color: var(--text); }
+.btn[disabled], .btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
+
+/* Vertical rhythm between page sections. */
+.section { padding-block: var(--space-9); }
+
+/* Flying code characters: services icon assembly and the contact success burst. */
+.glyph-fly {
+  position: absolute; z-index: 40; pointer-events: none;
+  font-family: var(--font-mono); font-weight: var(--fw-heading); font-size: var(--fs-label); line-height: 1;
+  transform: translate(-50%, -50%);
+  animation-name: glyph-fly; animation-timing-function: var(--ease-out); animation-fill-mode: forwards;
+}
+@keyframes glyph-fly {
+  0% { opacity: 0; transform: translate(-50%, -50%); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); }
+}
+
+/* Section eyebrow above an h2 (spec v2 §3). */
+.eyebrow {
+  margin: 0 0 var(--space-3); font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+}
+
+/* Service scene motion (spec v2 §3.2); stopped under reduced motion in ServiceCard. */
+@keyframes scene-drift { to { background-position: calc(-1 * var(--opal-mosaic-size-border)) 0; } }
+@keyframes scene-pulse { 50% { opacity: 0.35; } }
+@keyframes scene-dash { to { background-position: var(--space-3) 0; } }
+
+/* Decorative, continuously running animations stay paused until the page has loaded and gone idle
+   (html[data-motion="on"], set in Base.astro), so they never slow the first paint. */
+html:not([data-motion='on']) :is(.opal-text, .btn--primary, .project__shot, [data-scene] *) {
+  animation-play-state: paused;
+}
+

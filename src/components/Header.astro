@@ -1,0 +1,74 @@
+---
+interface Props { /** On pages other than the homepage, section links point back to it. */ base?: '' | '/' }
+const { base = '' } = Astro.props;
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { site } from '../content/site';
+---
+<header class="site-header" data-scrolled="false" data-menu-open="false">
+  <div class="container site-header__bar">
+    <a class="site-header__home" href="/" aria-label={site.a11y.home}><Logo /></a>
+    <div class="site-header__panel" id="site-menu">
+      <nav aria-label={site.a11y.navLabel}>
+        <ul class="site-header__links" role="list">
+          {site.nav.map((item) => <li><a href={`${base}${item.href}`}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+      <a class="btn btn--primary" href={`${base}${site.hero.primary.href}`}>{site.hero.primary.label}</a>
+    </div>
+    <div class="site-header__tools">
+      <ThemeToggle />
+      <button class="site-header__menu" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-button>
+        {site.a11y.menu}
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  import { initHeader } from '../scripts/header';
+  const root = document.querySelector<HTMLElement>('header.site-header');
+  if (root) initHeader(root);
+</script>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    border-bottom: var(--border-w) solid transparent;
+    transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  }
+  .site-header[data-scrolled='true'],
+  .site-header[data-menu-open='true'] { background: var(--bg); border-bottom-color: var(--border); }
+  .site-header__bar { display: flex; align-items: center; gap: var(--space-5); min-height: var(--header-h); }
+  .site-header__home { display: inline-flex; margin-right: auto; }
+  .site-header__tools { display: flex; align-items: center; gap: var(--space-2); }
+  .site-header__links { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+  .site-header__links a {
+    display: block; padding: var(--space-2) 0; color: var(--text); text-decoration: none; font-weight: var(--fw-strong);
+  }
+  .site-header__links a:hover { color: var(--navy); }
+  :global([data-theme='dark']) .site-header__links a:hover { color: var(--muted); }
+  .site-header__menu {
+    min-height: var(--space-7); padding: 0 var(--space-4);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    background: transparent; color: var(--text); font: inherit; font-weight: var(--fw-strong); cursor: pointer;
+  }
+
+  /* Phones: the links and the CTA live in a disclosure panel under the bar. */
+  .site-header__panel {
+    display: none; position: absolute; inset: 100% 0 auto 0;
+    padding: var(--space-4) var(--gutter) var(--space-5);
+    background: var(--bg); border-bottom: var(--border-w) solid var(--border);
+    flex-direction: column; align-items: flex-start; gap: var(--space-4);
+  }
+  .site-header[data-menu-open='true'] .site-header__panel { display: flex; }
+
+  @media (min-width: 48rem) {
+    .site-header__panel {
+      display: flex; position: static; flex-direction: row; align-items: center; gap: var(--space-6);
+      padding: 0; background: none; border: 0;
+    }
+    .site-header__links { flex-direction: row; gap: var(--space-5); }
+    .site-header__menu { display: none; }
+  }
+</style>

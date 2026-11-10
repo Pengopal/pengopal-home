@@ -1,0 +1,169 @@
+---
+import { site } from '../content/site';
+const c = site.contact;
+const b = c.band;
+---
+<section id="contact" class="contact-band" aria-labelledby="contact-title">
+  <div class="container contact-band__inner">
+    <div>
+      <h2 id="contact-title" class="contact-band__title">{b.title}</h2>
+      <p class="contact-band__line">{b.line} {b.orEmail} <a href={`mailto:${c.email}`}>{c.email}</a>{b.afterEmail}</p>
+    </div>
+    <!-- Without JS this jumps to the fold-out form below; with JS it opens the dialog. -->
+    <a class="btn btn--primary" href="#contact-form" data-open-contact>{b.dialogTitle}</a>
+  </div>
+
+  <details id="contact-form" class="container contact-fallback">
+    <summary>{b.dialogTitle}</summary>
+    <div class="contact__panel" data-contact-panel>
+      <form class="contact__form" novalidate data-contact-form data-sitekey={c.turnstileSiteKey}>
+        <div class="field">
+          <label for="f-name">{c.labels.name}</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="e-name" />
+          <p class="field__error" id="e-name" hidden></p>
+        </div>
+        <div class="field">
+          <label for="f-email">{c.labels.email}</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="254" aria-describedby="e-email" />
+          <p class="field__error" id="e-email" hidden></p>
+        </div>
+        <div class="field">
+          <label for="f-message">{c.labels.message}</label>
+          <!-- No maxlength: browsers count emoji as two characters and would silently cut the message; the script counts as people do. -->
+          <textarea id="f-message" name="message" rows="5" required aria-describedby="e-message"></textarea>
+          <p class="field__error" id="e-message" hidden></p>
+        </div>
+        <div class="field">
+          <label for="f-timeline">{c.labels.timeline}</label>
+          <select id="f-timeline" name="timeline" aria-describedby="e-timeline">
+            <option value="">{c.labels.timelineEmpty}</option>
+            {c.timelines.map((t) => <option value={t}>{t}</option>)}
+          </select>
+          <p class="field__error" id="e-timeline" hidden></p>
+        </div>
+        <div class="visually-hidden" aria-hidden="true">
+          <label for="f-website">{c.labels.trap}</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <div class="contact__turnstile" data-turnstile></div>
+        <button class="btn btn--primary contact__send" type="submit" disabled data-label={c.labels.send} data-sending={c.labels.sending}>{c.labels.send}</button>
+        <div class="contact__alert" role="alert" hidden data-failed>
+          {c.failed} <a href={`mailto:${c.email}`} data-mailto>{c.failedLink}</a>
+        </div>
+        <p class="contact__alert" role="alert" hidden data-turnstile-error>
+          {c.spamCheckFailed} <a href={`mailto:${c.email}`}>{c.email}</a>
+        </p>
+      </form>
+
+      <div class="contact__success" role="status" tabindex="-1" hidden data-success>
+        <h3>{c.success.heading}</h3>
+        <p>{c.success.body}</p>
+      </div>
+    </div>
+  </details>
+
+  <dialog class="contact-dialog" aria-labelledby="contact-dialog-title">
+    <div class="contact-dialog__head">
+      <h2 id="contact-dialog-title" class="contact-dialog__title">{b.dialogTitle}</h2>
+      <button type="button" class="contact-dialog__close" data-close-contact aria-label={b.close}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+    </div>
+    <div class="contact-dialog__body" data-dialog-body></div>
+  </dialog>
+</section>
+
+<script>
+  import { initContact } from '../scripts/contact';
+
+  const section = document.querySelector<HTMLElement>('section#contact')!;
+  const form = section.querySelector<HTMLFormElement>('[data-contact-form]')!;
+  const panel = section.querySelector<HTMLElement>('[data-contact-panel]')!;
+  const fallback = section.querySelector<HTMLDetailsElement>('details.contact-fallback')!;
+  const dialog = section.querySelector<HTMLDialogElement>('dialog.contact-dialog')!;
+
+  // With JS (and <dialog> support), the form lives in the dialog and the fold-out goes away.
+  if (typeof dialog.showModal === 'function') {
+    section.querySelector('[data-dialog-body]')!.appendChild(panel);
+    fallback.hidden = true;
+    const contact = initContact(form, { loadWhen: 'manual' });
+    let opener: HTMLElement | null = null;
+
+    const open = (from: HTMLElement) => {
+      opener = from;
+      if (!dialog.open) dialog.showModal();
+      contact.loadSpamCheck();
+      const name = form.querySelector<HTMLInputElement>('#f-name');
+      if (name && !form.hidden) name.focus();
+    };
+    // The band's button, and every "Start a project" button that points at the contact section.
+    document.querySelectorAll<HTMLElement>('[data-open-contact], a.btn--primary[href="#contact"]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        open(el);
+      }),
+    );
+    section.querySelector('[data-close-contact]')!.addEventListener('click', () => dialog.close());
+    // Return focus to whatever opened the dialog; if that is now hidden (the phone menu closes when its link
+    // is used), fall back to the visible menu button, then to the band's own button.
+    const visible = (el: Element | null): el is HTMLElement => !!el && el.getClientRects().length > 0;
+    dialog.addEventListener('close', () => {
+      const target = [opener, document.querySelector('[data-menu-button]'), section.querySelector('[data-open-contact]')].find(visible);
+      target?.focus();
+    });
+  } else {
+    initContact(form);
+  }
+</script>
+
+<style>
+  /* A quiet band, not a full section (spec v2 §3.4). */
+  .contact-band { border-top: var(--border-w) solid var(--border); padding-block: var(--space-8); }
+  .contact-band__inner { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: space-between; }
+  .contact-band__title { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+  .contact-band__line { margin: var(--space-2) 0 0; color: var(--muted); }
+  .contact-band__line a { color: var(--text); font-weight: var(--fw-strong); }
+
+  .contact-fallback { margin-top: var(--space-6); }
+  .contact-fallback summary { cursor: pointer; font-weight: var(--fw-strong); }
+  .contact-fallback .contact__panel { margin-top: var(--space-4); }
+
+  .contact-dialog {
+    width: min(100% - 2 * var(--gutter), var(--dialog-max)); max-height: calc(100dvh - 2 * var(--space-5));
+    padding: 0; border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+    background: var(--surface); color: var(--text);
+  }
+  .contact-dialog::backdrop { background: var(--scrim); }
+  .contact-dialog__head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    padding: var(--space-5) var(--space-6) 0;
+  }
+  .contact-dialog__title { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+  .contact-dialog__close {
+    display: inline-grid; place-items: center; width: var(--space-7); height: var(--space-7);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    background: transparent; color: var(--text); cursor: pointer;
+  }
+  .contact-dialog .contact__panel { border: 0; }
+
+  .contact__panel {
+    padding: var(--space-6); background: var(--surface);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+  }
+  .contact__form { display: grid; gap: var(--space-5); }
+  .field { display: grid; gap: var(--space-2); }
+  .field label { font-weight: var(--fw-strong); }
+  .field input, .field textarea, .field select {
+    font: inherit; color: var(--text); background: var(--bg);
+    border: var(--border-w) solid var(--control-border); border-radius: var(--radius-control);
+    padding: var(--space-3) var(--space-4); min-height: var(--space-7); width: 100%;
+  }
+  .field textarea { resize: vertical; }
+  .field [aria-invalid='true'] { border-color: var(--error); }
+  .field__error { margin: 0; color: var(--error); font-size: var(--fs-label); line-height: var(--lh-label); }
+  .contact__send { justify-self: start; }
+  .contact__alert { margin: 0; color: var(--error); }
+  .contact__alert a { color: inherit; font-weight: var(--fw-strong); }
+  .contact__success h3 { margin-bottom: var(--space-3); }
+  .contact__success p { margin: 0; color: var(--muted); }
+</style>

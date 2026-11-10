@@ -1,0 +1,75 @@
+---
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import lexend600 from '@fontsource/lexend/files/lexend-latin-600-normal.woff2?url';
+import inter400 from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
+import { site } from '../content/site';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const ogImage = new URL('/og.png', site.meta.url).href;
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.brand.name,
+  legalName: site.footer.company,
+  url: site.meta.url,
+  logo: new URL('/brand/logo-light.svg', site.meta.url).href,
+  email: site.contact.email,
+  sameAs: [site.footer.linkedin],
+};
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={site.meta.url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand.name} />
+    <meta property="og:url" content={site.meta.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.brand.ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0e1a3a" />
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    <link rel="preload" href={lexend600} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={inter400} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      // Mirrors resolveTheme() in src/scripts/theme.ts; runs before paint so the theme never flashes.
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem('pengopal-theme'); } catch (e) {}
+        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme =
+          stored === 'light' || stored === 'dark' ? stored : dark ? 'dark' : 'light';
+      })();
+      // Decorative motion (drifting opal, floating screenshots) starts only once the page has loaded and gone
+      // idle, so it never competes with the first paint; never under reduced motion (spec v2 §5).
+      (function () {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var on = function () { document.documentElement.dataset.motion = 'on'; };
+        var idle = function () { 'requestIdleCallback' in window ? requestIdleCallback(on, { timeout: 2000 }) : setTimeout(on, 200); };
+        if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{site.a11y.skip}</a>
+    <slot />
+  </body>
+</html>

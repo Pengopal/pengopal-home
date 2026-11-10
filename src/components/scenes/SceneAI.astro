@@ -1,0 +1,37 @@
+---
+import { site } from '../../content/site';
+const a = site.scenes.ai;
+---
+<div class="scene scene--ai" aria-hidden="true" data-scene>
+  <div class="doc"><i></i><i class="hl"></i><i></i><i class="w60"></i><i></i></div>
+  <p class="bubble scene__question" data-step="1">{a.question}</p>
+  <p class="bubble typing" data-step="2" data-until="4"><i></i><i></i><i></i></p>
+  <p class="bubble scene__answer" data-step="4">{a.answerLead} <b>{a.answerHighlight}</b>{a.answerTail}</p>
+</div>
+
+<style>
+  .doc {
+    position: absolute; left: var(--space-5); top: var(--space-5); width: var(--space-9); bottom: var(--space-5);
+    background: var(--white); border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    padding: var(--space-3); display: grid; gap: var(--space-2); align-content: start;
+  }
+  .doc i { height: var(--space-2); border-radius: var(--space-1); background: var(--scene-line); }
+  .doc .w60 { width: 60%; }
+  .doc .hl { background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-border) auto; }
+  .bubble {
+    position: absolute; right: var(--space-5); margin: 0; max-width: calc(100% - var(--space-9) - var(--space-8));
+    border-radius: var(--radius-card); padding: var(--space-2) var(--space-3);
+    font-size: var(--fs-label); line-height: var(--lh-label);
+  }
+  .scene__question { top: var(--space-5); background: var(--scene-ink); color: var(--white); }
+  .typing, .scene__answer { top: var(--space-9); background: var(--white); color: var(--ink); border: var(--border-w) solid var(--border); }
+  .typing { display: inline-flex; gap: var(--space-1); }
+  .typing i { width: var(--space-1); height: var(--space-1); border-radius: var(--radius-round); background: var(--muted); animation: scene-pulse var(--pulse-dur) infinite; }
+  .typing i:nth-child(2) { animation-delay: calc(var(--dur-1) / 2); }
+  .typing i:nth-child(3) { animation-delay: var(--dur-1); }
+  /* Final frame (no JS): the typing dots are gone, the answer is shown. */
+  .typing:not([data-on]) { display: none; }
+  .scene:not([data-pending]) .typing { display: none; }
+  .typing[data-gone] { display: none; }
+  .scene__answer b { font-weight: var(--fw-strong); color: var(--navy); }
+</style>

@@ -1,0 +1,31 @@
+---
+import ServiceCard from './ServiceCard.astro';
+import { site } from '../content/site';
+---
+<section id="services" class="section" aria-labelledby="services-title">
+  <div class="container">
+    <p class="eyebrow">{site.sections.services.eyebrow}</p>
+    <h2 id="services-title">{site.sections.services.title} <span class="opal-text">{site.sections.services.highlight}</span></h2>
+    <div class="services__grid">
+      {site.services.map((service) => <ServiceCard service={service} />)}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { onReveal, prefersReducedMotion } from '../motion/reveal';
+  import { playScene } from '../motion/scenes';
+
+  for (const scene of document.querySelectorAll<HTMLElement>('#services [data-scene]')) {
+    // Hold the moving parts back only when JS runs and motion is allowed; otherwise the final frame shows.
+    if (!prefersReducedMotion()) scene.dataset.pending = 'true';
+    onReveal(scene, () => playScene(scene), { threshold: 0.4 });
+  }
+</script>
+
+<style>
+  .services__grid { display: grid; gap: var(--space-5); margin-top: var(--space-7); }
+  @media (min-width: 48rem) {
+    .services__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

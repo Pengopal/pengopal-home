@@ -1,0 +1,22 @@
+---
+import { site } from '../content/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container footer__inner">
+    <p class="footer__copy">{site.brand.copyrightMark} {year} {site.footer.company}</p>
+    <ul class="footer__links" role="list">
+      <li><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></li>
+      <li><a href={site.footer.linkedin} rel="me noopener" target="_blank">{site.footer.linkedinLabel}</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .footer { border-top: var(--border-w) solid var(--border); padding-block: var(--space-7); color: var(--muted); font-size: var(--fs-label); line-height: var(--lh-label); }
+  .footer__inner { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; justify-content: space-between; }
+  .footer__copy { margin: 0; }
+  .footer__links { display: flex; gap: var(--space-5); margin: 0; padding: 0; list-style: none; }
+  .footer a { color: var(--text); text-decoration-color: var(--border); text-underline-offset: var(--space-1); }
+  .footer a:hover { text-decoration-color: currentColor; }
+</style>
