@@ -30,6 +30,24 @@
   --opal-glow: rgb(86 175 233 / 35%); /* #56afe9, a colour of the logo's opal */
   --btn-mosaic-w: 2.5px;
 
+  /* Feature band ("What we've built"): deep navy in both themes (spec v2 §3.1). */
+  --feature-bg: #0e1a3a;
+  --feature-text: #eef2ff;
+  --feature-muted: #afc0f5;
+  --feature-border: #2a3d78;
+  --tier-bg: rgb(42 61 120 / 35%);
+  --glow-size: 26rem;
+  --glow-opacity: 0.16;
+  --shot-shadow: 0 18px 50px rgb(0 0 0 / 45%);
+  --shot-bar: #161616;
+  --shot-dot: #555555;
+  --shots-ratio: 4 / 3;
+  --tilt-main: -1deg;
+  --tilt-back: 3deg;
+  --tilt-front: -2deg;
+  --float-y: 6px;
+  --float-dur: 8s;
+
   /* type */
   --font-heading: 'Lexend', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;

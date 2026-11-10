@@ -1,0 +1,39 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import { site } from '../content/site';
+const s = site.sections.work;
+---
+<section id="work" class="section work" aria-labelledby="work-title">
+  <div class="work__glow" aria-hidden="true"></div>
+  <div class="container">
+    <p class="eyebrow">{s.eyebrow}</p>
+    <h2 id="work-title">{s.title} <span class="opal-text">{s.highlight}</span></h2>
+    <div class="work__projects">
+      {site.projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+    {site.projects.length < 2 && <aside class="work__next" aria-hidden="true">{site.sections.nextProject}</aside>}
+  </div>
+</section>
+
+<style>
+  /* A deep-navy feature band in both themes: the colour tokens are re-pointed for everything inside. */
+  .work {
+    --bg: var(--feature-bg); --surface: var(--feature-bg); --text: var(--feature-text);
+    --muted: var(--feature-muted); --border: var(--feature-border); --opal-mosaic-dim: none;
+    position: relative; overflow: hidden; isolation: isolate;
+    background: var(--feature-bg); color: var(--text);
+  }
+  .work :global(.btn--secondary) { color: var(--text); border-color: var(--border); }
+  .work__glow {
+    position: absolute; z-index: -1; right: calc(-1 * var(--space-9)); top: calc(-1 * var(--space-8));
+    width: var(--glow-size); height: var(--glow-size); border-radius: var(--radius-round);
+    background: var(--opal-mosaic) center / var(--opal-mosaic-size-text) auto;
+    opacity: var(--glow-opacity); filter: blur(var(--space-6));
+  }
+  .work__projects { display: grid; gap: var(--space-9); margin-top: var(--space-7); }
+  .work__next {
+    margin-top: var(--space-7); display: inline-block; padding: var(--space-3) var(--space-4);
+    border: var(--border-w) dashed var(--border); border-radius: var(--radius-control);
+    color: var(--muted); font-size: var(--fs-label); line-height: var(--lh-label);
+  }
+</style>
