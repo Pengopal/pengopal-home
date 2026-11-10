@@ -58,6 +58,7 @@
   --scene-ink: var(--ink);
   --guard: 5.5rem;
   --fs-tiny: 0.6875rem;
+  --pulse-dur: 1.2s;
 
   /* Process timeline (spec v2 §3.3). */
   --node-size: 2.375rem;
@@ -139,7 +140,7 @@
   --error: #ff9a8f;
   --logo-outline: #c9d3f5;
   --scene-ink: #2a3d78;
-  --node-on: #5f74b8;
+  --node-on: #5c71b5; /* white step numbers on it: 4.68:1 */
   --opal-mosaic-dim: none;
   color-scheme: dark;
 }

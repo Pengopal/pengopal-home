@@ -84,3 +84,23 @@ test.describe('reduced motion', () => {
     expect(await progress(page)).toBe(1);
   });
 });
+
+test.describe('dark theme', () => {
+  test.use({ colorScheme: 'dark' });
+  test('reached step numbers keep 4.5:1 against their node', async ({ page }) => {
+    await page.goto('/');
+    await scrollPast(page);
+    await expect(reached(page)).toHaveCount(4, { timeout: 4000 });
+    const ratio = await page.locator('section#how-we-work li[data-reached="true"] .process__node').first().evaluate((el) => {
+      const rgb = (s: string) => s.match(/\d+(\.\d+)?/g)!.slice(0, 3).map(Number);
+      const lum = ([r, g, b]: number[]) => {
+        const f = (v: number) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+        return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+      };
+      const cs = getComputedStyle(el);
+      const a = lum(rgb(cs.color)), b = lum(rgb(cs.backgroundColor));
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    });
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+});

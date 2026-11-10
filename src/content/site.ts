@@ -58,7 +58,7 @@ export interface Site {
     failedLink: string;
     spamCheckFailed: string;
     errors: { name: string; email: string; message: string; timeline: string };
-    band: { title: string; line: string; orEmail: string; dialogTitle: string; close: string };
+    band: { title: string; line: string; orEmail: string; afterEmail: string; dialogTitle: string; close: string };
   };
   brand: { name: 'Pengopal'; logoAlt: string; ogImageAlt: string; copyrightMark: string };
   footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26'; linkedinLabel: string };
@@ -184,6 +184,7 @@ export const site: Site = {
       title: 'Have a project in mind?',
       line: "Tell us what you're building.",
       orEmail: 'Or email',
+      afterEmail: '.',
       dialogTitle: 'Start a project',
       close: 'Close',
     },

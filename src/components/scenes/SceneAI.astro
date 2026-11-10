@@ -26,9 +26,9 @@ const a = site.scenes.ai;
   .scene__question { top: var(--space-5); background: var(--scene-ink); color: var(--white); }
   .typing, .scene__answer { top: var(--space-9); background: var(--white); color: var(--ink); border: var(--border-w) solid var(--border); }
   .typing { display: inline-flex; gap: var(--space-1); }
-  .typing i { width: var(--space-1); height: var(--space-1); border-radius: var(--radius-round); background: var(--muted); animation: scene-pulse 1.2s infinite; }
-  .typing i:nth-child(2) { animation-delay: 0.2s; }
-  .typing i:nth-child(3) { animation-delay: 0.4s; }
+  .typing i { width: var(--space-1); height: var(--space-1); border-radius: var(--radius-round); background: var(--muted); animation: scene-pulse var(--pulse-dur) infinite; }
+  .typing i:nth-child(2) { animation-delay: calc(var(--dur-1) / 2); }
+  .typing i:nth-child(3) { animation-delay: var(--dur-1); }
   /* Final frame (no JS): the typing dots are gone, the answer is shown. */
   .typing:not([data-on]) { display: none; }
   .scene:not([data-pending]) .typing { display: none; }

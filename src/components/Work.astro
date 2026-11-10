@@ -11,7 +11,7 @@ const s = site.sections.work;
     <div class="work__projects">
       {site.projects.map((project) => <ProjectCard project={project} />)}
     </div>
-    {site.projects.length < 2 && <aside class="work__next" aria-hidden="true">{site.sections.nextProject}</aside>}
+    {site.projects.length < 2 && <aside class="work__next">{site.sections.nextProject}</aside>}
   </div>
 </section>
 

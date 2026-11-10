@@ -52,7 +52,8 @@ test('three screenshots, lazy, sized, with alt text', async ({ page }) => {
 test('the next-project slot shows while there is one project', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('section#work .work__next')).toHaveText('Next project — space reserved');
-  await expect(page.locator('section#work .work__next')).toHaveAttribute('aria-hidden', 'true');
+  // Visible text is exposed to screen readers too (design check, v2).
+  await expect(page.locator('section#work .work__next')).not.toHaveAttribute('aria-hidden', 'true');
 });
 
 test.describe('phone width', () => {

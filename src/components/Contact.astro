@@ -7,7 +7,7 @@ const b = c.band;
   <div class="container contact-band__inner">
     <div>
       <h2 id="contact-title" class="contact-band__title">{b.title}</h2>
-      <p class="contact-band__line">{b.line} {b.orEmail} <a href={`mailto:${c.email}`}>{c.email}</a>.</p>
+      <p class="contact-band__line">{b.line} {b.orEmail} <a href={`mailto:${c.email}`}>{c.email}</a>{b.afterEmail}</p>
     </div>
     <!-- Without JS this jumps to the fold-out form below; with JS it opens the dialog. -->
     <a class="btn btn--primary" href="#contact-form" data-open-contact>{b.dialogTitle}</a>
