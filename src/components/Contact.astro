@@ -1,16 +1,21 @@
 ---
 import { site } from '../content/site';
 const c = site.contact;
+const b = c.band;
 ---
-<section id="contact" class="section contact" aria-labelledby="contact-title">
-  <div class="container contact__inner">
-    <div class="contact__intro">
-      <h2 id="contact-title">{c.heading}</h2>
-      <p>{c.line}</p>
-      <p class="contact__prefer">{c.preferEmail} <a href={`mailto:${c.email}`}>{c.email}</a></p>
+<section id="contact" class="contact-band" aria-labelledby="contact-title">
+  <div class="container contact-band__inner">
+    <div>
+      <h2 id="contact-title" class="contact-band__title">{b.title}</h2>
+      <p class="contact-band__line">{b.line} {b.orEmail} <a href={`mailto:${c.email}`}>{c.email}</a>.</p>
     </div>
+    <!-- Without JS this jumps to the fold-out form below; with JS it opens the dialog. -->
+    <a class="btn btn--primary" href="#contact-form" data-open-contact>{b.dialogTitle}</a>
+  </div>
 
-    <div class="contact__panel">
+  <details id="contact-form" class="container contact-fallback">
+    <summary>{b.dialogTitle}</summary>
+    <div class="contact__panel" data-contact-panel>
       <form class="contact__form" novalidate data-contact-form data-sitekey={c.turnstileSiteKey}>
         <div class="field">
           <label for="f-name">{c.labels.name}</label>
@@ -55,19 +60,86 @@ const c = site.contact;
         <p>{c.success.body}</p>
       </div>
     </div>
-  </div>
+  </details>
+
+  <dialog class="contact-dialog" aria-labelledby="contact-dialog-title">
+    <div class="contact-dialog__head">
+      <h2 id="contact-dialog-title" class="contact-dialog__title">{b.dialogTitle}</h2>
+      <button type="button" class="contact-dialog__close" data-close-contact aria-label={b.close}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+    </div>
+    <div class="contact-dialog__body" data-dialog-body></div>
+  </dialog>
 </section>
 
 <script>
   import { initContact } from '../scripts/contact';
-  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
-  if (form) initContact(form);
+
+  const section = document.querySelector<HTMLElement>('section#contact')!;
+  const form = section.querySelector<HTMLFormElement>('[data-contact-form]')!;
+  const panel = section.querySelector<HTMLElement>('[data-contact-panel]')!;
+  const fallback = section.querySelector<HTMLDetailsElement>('details.contact-fallback')!;
+  const dialog = section.querySelector<HTMLDialogElement>('dialog.contact-dialog')!;
+
+  // With JS (and <dialog> support), the form lives in the dialog and the fold-out goes away.
+  if (typeof dialog.showModal === 'function') {
+    section.querySelector('[data-dialog-body]')!.appendChild(panel);
+    fallback.hidden = true;
+    const contact = initContact(form, { loadWhen: 'manual' });
+    let opener: HTMLElement | null = null;
+
+    const open = (from: HTMLElement) => {
+      opener = from;
+      if (!dialog.open) dialog.showModal();
+      contact.loadSpamCheck();
+      const name = form.querySelector<HTMLInputElement>('#f-name');
+      if (name && !form.hidden) name.focus();
+    };
+    // The band's button, and every "Start a project" button that points at the contact section.
+    document.querySelectorAll<HTMLElement>('[data-open-contact], a.btn--primary[href="#contact"]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        open(el);
+      }),
+    );
+    section.querySelector('[data-close-contact]')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => opener?.focus());
+  } else {
+    initContact(form);
+  }
 </script>
 
 <style>
-  .contact__inner { display: grid; gap: var(--space-7); }
-  .contact__intro p { margin: var(--space-4) 0 0; color: var(--muted); }
-  .contact__prefer a { color: var(--text); font-weight: var(--fw-strong); }
+  /* A quiet band, not a full section (spec v2 §3.4). */
+  .contact-band { border-top: var(--border-w) solid var(--border); padding-block: var(--space-8); }
+  .contact-band__inner { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: space-between; }
+  .contact-band__title { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+  .contact-band__line { margin: var(--space-2) 0 0; color: var(--muted); }
+  .contact-band__line a { color: var(--text); font-weight: var(--fw-strong); }
+
+  .contact-fallback { margin-top: var(--space-6); }
+  .contact-fallback summary { cursor: pointer; font-weight: var(--fw-strong); }
+  .contact-fallback .contact__panel { margin-top: var(--space-4); }
+
+  .contact-dialog {
+    width: min(100% - 2 * var(--gutter), var(--dialog-max)); max-height: calc(100dvh - 2 * var(--space-5));
+    padding: 0; border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
+    background: var(--surface); color: var(--text);
+  }
+  .contact-dialog::backdrop { background: var(--scrim); }
+  .contact-dialog__head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    padding: var(--space-5) var(--space-6) 0;
+  }
+  .contact-dialog__title { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+  .contact-dialog__close {
+    display: inline-grid; place-items: center; width: var(--space-7); height: var(--space-7);
+    border: var(--border-w) solid var(--border); border-radius: var(--radius-control);
+    background: transparent; color: var(--text); cursor: pointer;
+  }
+  .contact-dialog .contact__panel { border: 0; }
+
   .contact__panel {
     padding: var(--space-6); background: var(--surface);
     border: var(--border-w) solid var(--border); border-radius: var(--radius-card);
@@ -88,8 +160,4 @@ const c = site.contact;
   .contact__alert a { color: inherit; font-weight: var(--fw-strong); }
   .contact__success h3 { margin-bottom: var(--space-3); }
   .contact__success p { margin: 0; color: var(--muted); }
-
-  @media (min-width: 48rem) {
-    .contact__inner { grid-template-columns: 5fr 7fr; align-items: start; }
-  }
 </style>

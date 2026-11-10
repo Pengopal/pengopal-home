@@ -15,7 +15,14 @@ const FIELDS = ['name', 'email', 'message', 'timeline'] as const;
 /** Same limit as the Worker, counted in characters as people count them (an emoji is one). */
 const MESSAGE_MAX = 4000;
 
-export function initContact(form: HTMLFormElement): void {
+/**
+ * Wires the contact form. With loadWhen 'reveal' (v1) the spam check loads as the form nears the
+ * viewport; with 'manual' (v2's dialog) it loads when the caller calls loadSpamCheck(). It loads once.
+ */
+export function initContact(
+  form: HTMLFormElement,
+  opts: { loadWhen: 'reveal' | 'manual' } = { loadWhen: 'reveal' },
+): { loadSpamCheck(): void } {
   const section = form.closest('section')!;
   const send = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
   const failed = form.querySelector<HTMLElement>('[data-failed]')!;
@@ -66,7 +73,10 @@ export function initContact(form: HTMLFormElement): void {
       spamCheckFailed();
     }
   };
+  let spamCheckStarted = false;
   const loadTurnstile = () => {
+    if (spamCheckStarted) return;
+    spamCheckStarted = true;
     if ((window as TurnstileWindow).turnstile) return renderWidget();
     const s = document.createElement('script');
     s.src = TURNSTILE_SRC;
@@ -75,7 +85,7 @@ export function initContact(form: HTMLFormElement): void {
     s.onerror = spamCheckFailed;
     document.head.appendChild(s);
   };
-  onReveal(form, loadTurnstile, { threshold: 0, rootMargin: '600px 0px' });
+  if (opts.loadWhen === 'reveal') onReveal(form, loadTurnstile, { threshold: 0, rootMargin: '600px 0px' });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -129,4 +139,5 @@ export function initContact(form: HTMLFormElement): void {
       failed.hidden = false;
     }
   });
+  return { loadSpamCheck: loadTurnstile };
 }

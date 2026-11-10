@@ -14,9 +14,14 @@ async function stubTurnstile(page: Page) {
   await page.route('https://challenges.cloudflare.com/**', (r) => r.abort());
 }
 
+/** v2: the form lives in a dialog opened from the contact band. */
+async function openDialog(page: Page) {
+  await page.locator('section#contact [data-open-contact]').click();
+  await expect(page.locator('section#contact dialog.contact-dialog')).toHaveAttribute('open', '');
+}
+
 async function fill(page: Page) {
   const form = page.locator('section#contact form');
-  await form.scrollIntoViewIfNeeded();
   await form.getByLabel('Name').fill('Ada');
   await form.getByLabel('Email').fill('ada@example.com');
   await form.getByLabel('What are you building?').fill('A multi-tenant SaaS with SSO.');
@@ -27,12 +32,13 @@ async function fill(page: Page) {
 test('every field has a label and the email link is offered', async ({ page }) => {
   await stubTurnstile(page);
   await page.goto('/');
+  await openDialog(page);
   const section = page.locator('section#contact');
-  await expect(section.locator('h2')).toHaveText('Start a project');
+  await expect(section.locator('#contact-dialog-title')).toHaveText('Start a project');
   for (const label of ['Name', 'Email', 'What are you building?', 'Timeline']) {
     await expect(section.getByLabel(label)).toBeVisible();
   }
-  await expect(section.locator('.contact__prefer a[href="mailto:hello@pengopal.com"]')).toBeVisible();
+  await expect(section.locator('.contact-band__line a[href="mailto:hello@pengopal.com"]')).toBeVisible();
   await expect(section).not.toContainText(/pakistan|time ?zone|UTC/i);
 });
 
@@ -44,6 +50,7 @@ test('success replaces the form with a thank-you', async ({ page }) => {
     await r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
   });
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   await form.getByRole('button', { name: 'Send' }).click();
   await expect(page.locator('section#contact [data-success]')).toBeVisible();
@@ -57,6 +64,7 @@ test('400 shows errors under fields, marks them invalid and keeps input', async 
     r.fulfill({ status: 400, contentType: 'application/json', body: '{"ok":false,"fields":{"email":"server wording"}}' }),
   );
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   await form.getByRole('button', { name: 'Send' }).click();
   const email = form.getByLabel('Email');
@@ -70,6 +78,7 @@ test('502 shows an error with an email link containing the message', async ({ pa
   await stubTurnstile(page);
   await page.route('**/api/contact', (r) => r.fulfill({ status: 502, contentType: 'application/json', body: '{"ok":false}' }));
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   await form.getByRole('button', { name: 'Send' }).click();
   const alert = page.locator('section#contact [data-failed]');
@@ -88,6 +97,7 @@ test('submit button is disabled while sending (no double send)', async ({ page }
     await r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
   });
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   const send = form.getByRole('button', { name: 'Send' });
   await send.click();
@@ -101,7 +111,7 @@ test('submit button is disabled while sending (no double send)', async ({ page }
 test('if the spam check cannot load, sending is disabled and email is offered', async ({ page }) => {
   await page.route('https://challenges.cloudflare.com/**', (r) => r.abort());
   await page.goto('/');
-  await page.locator('section#contact form').scrollIntoViewIfNeeded();
+  await openDialog(page);
   await expect(page.locator('section#contact [data-turnstile-error]')).toBeVisible({ timeout: 6000 });
   await expect(page.locator('section#contact form').getByRole('button', { name: 'Send' })).toBeDisabled();
   await expect(page.locator('section#contact [data-turnstile-error] a[href^="mailto:"]')).toBeVisible();
@@ -110,6 +120,7 @@ test('if the spam check cannot load, sending is disabled and email is offered', 
 test("client-side errors use our own wording, not the browser's", async ({ page }) => {
   await stubTurnstile(page);
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   await form.getByLabel('Email').fill('not-an-email');
   await form.getByRole('button', { name: 'Send' }).click();
@@ -126,6 +137,7 @@ test('a 4000-character Arabic and emoji message is sent whole', async ({ page })
     await r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
   });
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   const msg = Array.from('مرحبا 👋 '.repeat(800)).slice(0, 4000).join('');
   const box = form.getByLabel('What are you building?');
@@ -143,6 +155,7 @@ test('a message over 4000 characters shows our error and is not sent', async ({ 
   let requests = 0;
   await page.route('**/api/contact', (r) => { requests++; return r.fulfill({ status: 200, body: '{"ok":true}' }); });
   await page.goto('/');
+  await openDialog(page);
   const form = await fill(page);
   const box = form.getByLabel('What are you building?');
   await box.fill('a'.repeat(4001));
@@ -164,7 +177,7 @@ for (const failure of ['error-callback', 'render throws'] as const) {
       };
     }, failure);
     await page.goto('/');
-    await page.locator('section#contact form').scrollIntoViewIfNeeded();
+    await openDialog(page);
     await expect(page.locator('section#contact [data-turnstile-error]')).toBeVisible();
     await expect(page.locator('section#contact form').getByRole('button', { name: 'Send' })).toBeDisabled();
   });

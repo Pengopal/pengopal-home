@@ -65,6 +65,10 @@
   --node-on: var(--ink);
   --opal-blue: #2b77c0; /* the logo's opal blue, deepened for white text */
 
+  /* Contact dialog (spec v2 §3.4). */
+  --dialog-max: 40rem;
+  --scrim: rgb(14 26 58 / 55%);
+
   /* type */
   --font-heading: 'Lexend', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
