@@ -192,32 +192,3 @@ node scripts/import-tenantry.mjs    # Tenantry logo and screenshots
 ```bash
 node scripts/readme-images.mjs      # the images in this README
 ```
-
-## Deploy (Cloudflare Workers)
-
-1. **Turnstile.** Create a widget for `pengopal.com` (Managed mode) and put its site key in `.env` as `PUBLIC_TURNSTILE_SITE_KEY`.
-2. **Secrets.**
-   ```bash
-   npx wrangler secret put TURNSTILE_SECRET
-   ```
-   ```bash
-   npx wrangler secret put CONTACT_TO
-   ```
-   `CONTACT_TO` must be a verified destination address in Email Routing.
-3. **Deploy.**
-   ```bash
-   npm run deploy
-   ```
-   This refuses to deploy without a real site key. Cloudflare's always-pass test key would make every enquiry fail without anyone noticing.
-4. **Domains.** Add `pengopal.com` and `www.pengopal.com` as custom domains on the Worker, and redirect `www` to the apex.
-
-After the first deploy, send one real enquiry through the form and check it arrives.
-
-## Roadmap
-
-| Phase | Delivers | Status |
-| --- | --- | --- |
-| v1 | Brand, the code-stream hero, services, process, contact Worker, SEO, quality gates | Done |
-| v2 | Opal Mosaic brand style, Tenantry showcase, service scenes, showcase timeline, contact dialog | Done |
-| Launch | Turnstile keys, secrets, first deploy to pengopal.com, a real test enquiry | Next |
-| Later | More projects in What we've built; a dark-mode treatment for the feature band | Later |
