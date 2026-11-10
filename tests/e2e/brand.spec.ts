@@ -31,8 +31,9 @@ test.describe('reduced motion', () => {
 
 test('decorative motion waits until the page has loaded and gone idle', async ({ page }) => {
   await page.addInitScript(() => {
-    // Record the motion flag and the opal text's play state at the very first paint.
-    requestAnimationFrame(() => {
+    // Record the motion flag and the opal text's play state once the document is parsed, which is always
+    // before the load event (a first animation frame can come after load + idle on a busy machine).
+    document.addEventListener('DOMContentLoaded', () => {
       const hl = document.querySelector('h1 .opal-text');
       (window as unknown as { __first: unknown }).__first = {
         motion: document.documentElement.dataset.motion ?? null,
@@ -60,4 +61,13 @@ test('the feature-band glow uses a mask, not a blur filter', async ({ page }) =>
   const glow = page.locator('section#work .work__glow');
   await expect(glow).toHaveCSS('filter', 'none');
   expect(await glow.evaluate((el) => getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage)).toContain('radial-gradient');
+});
+
+test('opal text stays visible when the mosaic texture fails to load', async ({ page }) => {
+  await page.route('**/brand/opal-mosaic.webp', (r) => r.fulfill({ status: 404, body: '' }));
+  await page.goto('/');
+  const bg = await page.locator('h1 .opal-text').evaluate((el) => getComputedStyle(el).backgroundImage);
+  // A gradient layer sits under the texture, so the clipped text always has a fill.
+  expect(bg).toContain('opal-mosaic');
+  expect(bg).toContain('linear-gradient');
 });

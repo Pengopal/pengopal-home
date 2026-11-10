@@ -29,7 +29,8 @@ section[id] { scroll-margin-top: var(--header-h); }
 .container { width: min(100% - 2 * var(--gutter), var(--content-max)); margin-inline: auto; }
 
 .opal-text {
-  background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-text) auto;
+  /* The gradient underneath gives the clipped text a fill until (or if) the texture never arrives. */
+  background: var(--opal-mosaic) 0 0 / var(--opal-mosaic-size-text) auto, var(--opal-text-fallback);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

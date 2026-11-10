@@ -104,7 +104,13 @@ const b = c.band;
       }),
     );
     section.querySelector('[data-close-contact]')!.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => opener?.focus());
+    // Return focus to whatever opened the dialog; if that is now hidden (the phone menu closes when its link
+    // is used), fall back to the visible menu button, then to the band's own button.
+    const visible = (el: Element | null): el is HTMLElement => !!el && el.getClientRects().length > 0;
+    dialog.addEventListener('close', () => {
+      const target = [opener, document.querySelector('[data-menu-button]'), section.querySelector('[data-open-contact]')].find(visible);
+      target?.focus();
+    });
   } else {
     initContact(form);
   }

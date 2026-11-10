@@ -86,3 +86,17 @@ test.describe('without JavaScript', () => {
     await expect(page.locator('section#contact').getByLabel('Name')).toBeVisible();
   });
 });
+
+test.describe('phone menu', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+  test('closing the dialog opened from the phone menu returns focus to the menu button', async ({ page }) => {
+    await stubTurnstile(page);
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.locator('header .btn--primary').click();
+    await expect(dialog(page)).toHaveAttribute('open', '');
+    await page.keyboard.press('Escape');
+    await expect(dialog(page)).not.toHaveAttribute('open', '');
+    await expect(page.getByRole('button', { name: 'Menu' })).toBeFocused();
+  });
+});
