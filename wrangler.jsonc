@@ -4,7 +4,14 @@
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-10",
   "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "404-page" },
+  // Cloudflare creates the DNS records and certificates for these on deploy.
+  // www is attached only so the Worker can redirect it to the apex.
+  "routes": [
+    { "pattern": "pengopal.com", "custom_domain": true },
+    { "pattern": "www.pengopal.com", "custom_domain": true }
+  ],
   "send_email": [{ "name": "EMAIL" }],
+  // Never committed. CI passes them with --secrets-file; deploy fails if either is missing.
+  "secrets": { "required": ["TURNSTILE_SECRET", "CONTACT_TO"] },
   "observability": { "enabled": true }
-  // Secrets (never committed): TURNSTILE_SECRET, CONTACT_TO — set with `wrangler secret put`.
 }

@@ -92,17 +92,16 @@ On any failure, the visitor gets a ready-filled email link instead. Without Java
 
 ## Quality
 
-Every promise is an automated check:
+A small test suite covers what would actually hurt if it broke, and runs on every push:
 
-| Check | Tool | Result |
+| Check | Tool | Tests |
 | --- | --- | --- |
-| Logic: contact Worker, copy rules, logo colours, mosaic contrast, timeline maths | Vitest | 75 tests |
-| Behaviour in Chromium, Firefox and WebKit, including phone width, reduced motion, no JavaScript and dark mode | Playwright | 230 tests |
-| Accessibility: WCAG 2.1 AA in light and dark, keyboard order, visible focus | axe + Playwright | 0 violations |
-| Speed on a mid-range phone | Lighthouse CI | 96 performance · 100 accessibility · 100 best practices · 100 SEO |
+| Contact Worker: sends a valid enquiry, rejects bad input and header injection, blocks failed spam checks, reports mail failures, www → apex redirect | Vitest | 5 |
+| The page loads cleanly and fits a phone, the form sends, a failed send offers the email link, 404 / robots / sitemap | Playwright (Chromium) | 4 |
+| Accessibility: WCAG 2.1 AA in light and dark | axe + Playwright | 1 |
 | Types | `astro check` + `tsc` | 0 errors |
 
-**Copy rules** are enforced by tests. Nothing on the page may mention time zones, promise a reply time, or link to GitHub, except a project's own repository.
+Lighthouse is run by hand before big changes (last run: 96 performance · 100 accessibility · 100 best practices · 100 SEO).
 
 ## Architecture
 
@@ -162,7 +161,7 @@ npm run build && npx wrangler dev
 ### Tests
 
 ```bash
-npx playwright install chromium firefox webkit
+npx playwright install chromium
 ```
 
 ```bash
