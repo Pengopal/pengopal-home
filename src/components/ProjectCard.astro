@@ -10,7 +10,15 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
   <div class="project__copy">
     <div class="project__head">
       <h3 id={`project-${p.id}`} class="project__name">
-        <img src={p.logo.src} alt={p.logo.alt} width={p.logo.width} height={p.logo.height} loading="lazy" decoding="async" />
+        {p.logo ? (
+          <img src={p.logo.src} alt={p.logo.alt} width={p.logo.width} height={p.logo.height} loading="lazy" decoding="async" />
+        ) : (
+          <span class="project__wordmark">
+            <span class="visually-hidden">{p.name}</span>
+            <span aria-hidden="true">{p.wordmark?.text}</span>
+            <span class="project__tag" aria-hidden="true">{p.wordmark?.tag}</span>
+          </span>
+        )}
       </h3>
       <span class="project__badge">{p.badge}</span>
     </div>
@@ -56,6 +64,15 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
   .project__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
   .project__name { margin: 0; line-height: 0; }
   .project__name img { height: var(--space-6); width: auto; }
+  .project__wordmark {
+    display: inline-flex; align-items: center; gap: var(--space-2); height: var(--space-6);
+    /* Sized to sit level with a 32px logo image such as Tenantry's. */
+    font-family: var(--font-heading); font-weight: var(--fw-heading); font-size: calc(var(--fs-h3) * 1.4); line-height: 1;
+  }
+  .project__tag {
+    padding: var(--space-1) var(--space-2); border-radius: var(--radius-control);
+    background: var(--gold); color: var(--ink); font-size: var(--fs-label); letter-spacing: 0.04em;
+  }
   .project__badge {
     font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label);
     padding: var(--space-1) var(--space-3); border-radius: var(--radius-control);

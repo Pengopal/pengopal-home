@@ -31,7 +31,9 @@ test('the page loads without errors and fits a phone screen', async ({ page }) =
   await page.route('https://challenges.cloudflare.com/**', (r) => r.abort());
   await page.goto('/');
   await expect(page.locator('h1')).toHaveText('Software and AI, built end to end.');
-  await expect(page.locator('section#work a[href="https://tenantry.pengopal.com"]')).toBeVisible();
+  for (const demo of ['https://tenantry.pengopal.com', 'https://opa.pengopal.com']) {
+    await expect(page.locator(`section#work a[href="${demo}"]`)).toBeVisible();
+  }
 
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);

@@ -17,7 +17,9 @@ export interface SectionHeading { eyebrow: string; title: string; highlight: str
 export interface Project {
   id: string;
   name: string;
-  logo: { src: string; width: number; height: number; alt: string };
+  /** Either the product's own logo image, or its name as text with a short tag (e.g. "OPA"). */
+  logo?: { src: string; width: number; height: number; alt: string };
+  wordmark?: { text: string; tag: string };
   badge: string;
   pitch: string;
   stats: { value: string; label: string }[];
@@ -141,6 +143,32 @@ export const site: Site = {
         { src: '/work/tenantry/home.webp', alt: 'Tenantry home: a setup card, workspace numbers and latest projects', width: 800, height: 432, role: 'main' },
         { src: '/work/tenantry/search.webp', alt: 'Tenantry search across pages, people and projects', width: 800, height: 432, role: 'back' },
         { src: '/work/tenantry/login-branded.webp', alt: "A workspace's own branded sign-in page", width: 400, height: 320, role: 'front' },
+      ],
+    },
+    {
+      id: 'peng-opa',
+      name: 'Peng OPA',
+      wordmark: { text: 'Peng', tag: 'OPA' },
+      badge: 'v1 · live',
+      pitch:
+        'Business rules as plain sentences, run by Open Policy Agent. Ops staff write, test and publish the rules; your systems ask one endpoint for the decision. Every workspace is kept apart from the others.',
+      stats: [
+        { value: '9', label: 'ready-made policy templates' },
+        { value: '3', label: 'roles: owner, editor and viewer' },
+        { value: '1', label: 'HTTPS call for every decision' },
+      ],
+      tiers: [
+        { name: 'For ops staff', body: 'Build rules as sentences, try them on real inputs, then publish. Every version can be compared or rolled back.' },
+        { name: 'For engineers', body: 'One call returns allow or deny, the reason and any results, such as a discount. No Rego to write.' },
+      ],
+      links: {
+        demo: { label: 'Try the live demo', href: 'https://opa.pengopal.com' },
+        code: { label: 'View the code', href: 'https://github.com/Pengopal/peng-opa' },
+      },
+      shots: [
+        { src: '/work/peng-opa/home.webp', alt: 'Peng OPA home: decisions today, allow rate, live policies and a 14-day decision chart', width: 800, height: 500, role: 'main' },
+        { src: '/work/peng-opa/editor.webp', alt: 'The policy editor: a checkout discount written as rules with conditions and outcomes', width: 800, height: 500, role: 'back' },
+        { src: '/work/peng-opa/try-it.webp', alt: 'The Try it panel, which runs sample inputs against the draft or live policy', width: 400, height: 368, role: 'front' },
       ],
     },
   ],
