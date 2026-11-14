@@ -10,15 +10,7 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
   <div class="project__copy">
     <div class="project__head">
       <h3 id={`project-${p.id}`} class="project__name">
-        {p.logo ? (
-          <img src={p.logo.src} alt={p.logo.alt} width={p.logo.width} height={p.logo.height} loading="lazy" decoding="async" />
-        ) : (
-          <span class="project__wordmark">
-            <span class="visually-hidden">{p.name}</span>
-            <span aria-hidden="true">{p.wordmark?.text}</span>
-            <span class="project__tag" aria-hidden="true">{p.wordmark?.tag}</span>
-          </span>
-        )}
+        <img src={p.logo.src} alt={p.logo.alt} width={p.logo.width} height={p.logo.height} loading="lazy" decoding="async" />
       </h3>
       <span class="project__badge">{p.badge}</span>
     </div>
@@ -42,8 +34,18 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
     )}
 
     <div class="project__links">
-      {p.links.demo && <a class="btn btn--primary" href={p.links.demo.href} target="_blank" rel="noopener">{p.links.demo.label}</a>}
-      {p.links.code && <a class="btn btn--secondary" href={p.links.code.href} target="_blank" rel="noopener">{p.links.code.label}</a>}
+      {p.links.demo && (
+        <a class="btn btn--primary" href={p.links.demo.href} target="_blank" rel="noopener">
+          <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+          {p.links.demo.label}
+        </a>
+      )}
+      {p.links.code && (
+        <a class="btn btn--secondary" href={p.links.code.href} target="_blank" rel="noopener">
+          <svg class="btn__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z" /></svg>
+          {p.links.code.label}
+        </a>
+      )}
     </div>
   </div>
 
@@ -64,15 +66,6 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
   .project__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
   .project__name { margin: 0; line-height: 0; }
   .project__name img { height: var(--space-6); width: auto; }
-  .project__wordmark {
-    display: inline-flex; align-items: center; gap: var(--space-2); height: var(--space-6);
-    /* Sized to sit level with a 32px logo image such as Tenantry's. */
-    font-family: var(--font-heading); font-weight: var(--fw-heading); font-size: calc(var(--fs-h3) * 1.4); line-height: 1;
-  }
-  .project__tag {
-    padding: var(--space-1) var(--space-2); border-radius: var(--radius-control);
-    background: var(--gold); color: var(--ink); font-size: var(--fs-label); letter-spacing: 0.04em;
-  }
   .project__badge {
     font-family: var(--font-mono); font-size: var(--fs-label); line-height: var(--lh-label);
     padding: var(--space-1) var(--space-3); border-radius: var(--radius-control);
@@ -91,6 +84,7 @@ const shots = [...p.shots].sort((a, b) => order[a.role] - order[b.role]);
   .project__tier p { margin: 0; font-size: var(--fs-label); line-height: var(--lh-label); color: var(--muted); }
 
   .project__links { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+  .btn__icon { width: 1.125em; height: 1.125em; flex: none; }
 
   /* Screenshots: the frames keep their size from the data, so a missing image never moves the layout. */
   .project__shots { position: relative; }

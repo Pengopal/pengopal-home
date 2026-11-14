@@ -17,9 +17,7 @@ export interface SectionHeading { eyebrow: string; title: string; highlight: str
 export interface Project {
   id: string;
   name: string;
-  /** Either the product's own logo image, or its name as text with a short tag (e.g. "OPA"). */
-  logo?: { src: string; width: number; height: number; alt: string };
-  wordmark?: { text: string; tag: string };
+  logo: { src: string; width: number; height: number; alt: string };
   badge: string;
   pitch: string;
   stats: { value: string; label: string }[];
@@ -147,11 +145,11 @@ export const site: Site = {
     },
     {
       id: 'peng-opa',
-      name: 'Peng OPA',
-      wordmark: { text: 'Peng', tag: 'OPA' },
+      name: 'PengOPA',
+      logo: { src: '/work/peng-opa/logo-dark.svg', width: 228, height: 58, alt: 'PengOPA' },
       badge: 'v1 · live',
       pitch:
-        'Business rules as plain sentences, run by Open Policy Agent. Ops staff write, test and publish the rules; your systems ask one endpoint for the decision. Every workspace is kept apart from the others.',
+        'Business rules and access policies, decided in milliseconds. A multi-tenant policy manager built on Open Policy Agent: ops staff write rules as plain sentences, and your systems ask one endpoint for the decision.',
       stats: [
         { value: '9', label: 'ready-made policy templates' },
         { value: '3', label: 'roles: owner, editor and viewer' },
@@ -166,9 +164,9 @@ export const site: Site = {
         code: { label: 'View the code', href: 'https://github.com/Pengopal/peng-opa' },
       },
       shots: [
-        { src: '/work/peng-opa/home.webp', alt: 'Peng OPA home: decisions today, allow rate, live policies and a 14-day decision chart', width: 800, height: 500, role: 'main' },
+        { src: '/work/peng-opa/home.webp', alt: 'PengOPA home: decisions today, allow rate, live policies, response time and a 14-day decision chart', width: 800, height: 500, role: 'main' },
         { src: '/work/peng-opa/editor.webp', alt: 'The policy editor: a checkout discount written as rules with conditions and outcomes', width: 800, height: 500, role: 'back' },
-        { src: '/work/peng-opa/try-it.webp', alt: 'The Try it panel, which runs sample inputs against the draft or live policy', width: 400, height: 368, role: 'front' },
+        { src: '/work/peng-opa/try-it.webp', alt: 'The Try it panel: a sample order is allowed with the gold loyalty discount', width: 400, height: 470, role: 'front' },
       ],
     },
   ],

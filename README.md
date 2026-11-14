@@ -50,7 +50,7 @@ The primary button is navy with white text (15.5:1) and a drifting mosaic border
 A feature band for the studio's own products, each with real screenshots, facts taken only from its README, and links to the live demo and the code:
 
 - [**Tenantry**](https://github.com/mfurqanwork/tenantry-keycloak-multitenancy): multi-tenant sign-in on Keycloak ([live demo](https://tenantry.pengopal.com)).
-- [**Peng OPA**](https://github.com/Pengopal/peng-opa): business rules as plain sentences, run by Open Policy Agent ([live demo](https://opa.pengopal.com)).
+- [**PengOPA**](https://github.com/Pengopal/peng-opa): business rules and access policies, decided in milliseconds, on Open Policy Agent ([live demo](https://opa.pengopal.com)).
 
 Projects are typed data in `src/content/site.ts`, so the next one is a data entry, not a redesign.
 
@@ -188,7 +188,7 @@ node scripts/import-tenantry.mjs    # Tenantry logo and screenshots
 ```
 
 ```bash
-node scripts/import-peng-opa.mjs    # Peng OPA screenshots
+node scripts/import-peng-opa.mjs    # PengOPA screenshots
 ```
 
 ```bash
