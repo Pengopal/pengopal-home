@@ -184,7 +184,7 @@ node scripts/sample-palette.mjs     # code-stream colours, sampled from the logo
 ```
 
 ```bash
-node scripts/import-tenantry.mjs    # Tenantry logo and screenshots
+node scripts/import-tenantry.mjs    # Tenantry screenshots
 ```
 
 ```bash
