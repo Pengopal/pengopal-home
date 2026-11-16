@@ -120,12 +120,12 @@ export const site: Site = {
     {
       id: 'tenantry',
       name: 'Tenantry',
-      logo: { src: '/work/tenantry/logo-dark.svg', width: 168, height: 32, alt: 'Tenantry' },
-      badge: 'v0.6.2 · MIT · live',
+      logo: { src: '/work/tenantry/logo-dark.svg', width: 141, height: 32, alt: 'Tenantry' },
+      badge: 'v1.1.0 · MIT · live',
       pitch:
         'Multi-tenant sign-in, teams and branding for SaaS, built on Keycloak. Two tiers on one codebase, with isolation enforced at the token, the API and the database.',
       stats: [
-        { value: '33', label: 'isolation guarantees tested in CI' },
+        { value: '34', label: 'isolation guarantees tested in CI' },
         { value: '2', label: 'tiers: shared realm or a realm each' },
         { value: '1', label: 'codebase for both tiers' },
       ],
@@ -138,9 +138,9 @@ export const site: Site = {
         code: { label: 'View the code', href: 'https://github.com/mfurqanwork/tenantry-keycloak-multitenancy' },
       },
       shots: [
-        { src: '/work/tenantry/home.webp', alt: 'Tenantry home: a setup card, workspace numbers and latest projects', width: 800, height: 432, role: 'main' },
-        { src: '/work/tenantry/search.webp', alt: 'Tenantry search across pages, people and projects', width: 800, height: 432, role: 'back' },
-        { src: '/work/tenantry/login-branded.webp', alt: "A workspace's own branded sign-in page", width: 400, height: 320, role: 'front' },
+        { src: '/work/tenantry/home.webp', alt: 'Tenantry home: workspace numbers for people, invites and projects, and the latest projects', width: 800, height: 444, role: 'main' },
+        { src: '/work/tenantry/search.webp', alt: 'Tenantry search across pages, people and projects', width: 800, height: 500, role: 'back' },
+        { src: '/work/tenantry/login-branded.webp', alt: "A workspace's own branded sign-in page, with company login first", width: 400, height: 388, role: 'front' },
       ],
     },
     {
