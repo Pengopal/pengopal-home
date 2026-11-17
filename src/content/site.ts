@@ -61,7 +61,7 @@ export interface Site {
     band: { title: string; line: string; orEmail: string; afterEmail: string; dialogTitle: string; close: string };
   };
   brand: { name: 'Pengopal'; logoAlt: string; ogImageAlt: string; copyrightMark: string };
-  footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/in/furqan26'; linkedinLabel: string };
+  footer: { company: 'Pengopal Technologies'; linkedin: 'https://www.linkedin.com/company/pengopal-technologies'; linkedinLabel: string };
   notFound: { title: string; heading: string; body: string; home: string };
   a11y: { skip: string; navLabel: string; menu: string; themeToggle: string; home: string };
 }
@@ -224,7 +224,7 @@ export const site: Site = {
   brand: { name: 'Pengopal', logoAlt: 'Pengopal', ogImageAlt: 'Pengopal logo on deep navy', copyrightMark: '©' },
   footer: {
     company: 'Pengopal Technologies',
-    linkedin: 'https://www.linkedin.com/in/furqan26',
+    linkedin: 'https://www.linkedin.com/company/pengopal-technologies',
     linkedinLabel: 'LinkedIn',
   },
   notFound: {
