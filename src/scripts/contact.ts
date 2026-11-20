@@ -2,6 +2,7 @@ import { onReveal } from '../motion/reveal';
 import { burst } from '../motion/burst';
 import { site } from '../content/site';
 import { mailtoFallback, submitEnquiry, type EnquiryInput } from './contact-client';
+import { analyticsVisitorId, track } from './analytics';
 
 const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
@@ -108,6 +109,7 @@ export function initContact(
     const input: EnquiryInput = {
       name: data.name ?? '', email: data.email ?? '', message: data.message ?? '',
       timeline: data.timeline ?? '', website: data.website ?? '', turnstileToken: token,
+      visitorId: analyticsVisitorId(),
     };
 
     sending = true;
@@ -137,6 +139,7 @@ export function initContact(
     } else {
       mailto.href = mailtoFallback(input);
       failed.hidden = false;
+      track('contact_failed', { stage: 'send' });
     }
   });
   return { loadSpamCheck: loadTurnstile };

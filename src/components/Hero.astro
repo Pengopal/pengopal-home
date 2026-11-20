@@ -40,8 +40,8 @@ const markY = FRAME_H * 0.62 - MARK.w * MARK.tailY;
     <h1 id="hero-title">{site.hero.lead} <span class="opal-text">{site.hero.highlight}</span></h1>
     <p class="hero__sub">{site.hero.sub}</p>
     <div class="hero__actions">
-      <a class="btn btn--primary" href={site.hero.primary.href}>{site.hero.primary.label}</a>
-      <a class="btn btn--secondary" href={site.hero.secondary.href}>{site.hero.secondary.label}</a>
+      <a class="btn btn--primary" href={site.hero.primary.href} data-track="cta_clicked" data-track-location="hero" data-track-cta="primary">{site.hero.primary.label}</a>
+      <a class="btn btn--secondary" href={site.hero.secondary.href} data-track="cta_clicked" data-track-location="hero" data-track-cta="secondary">{site.hero.secondary.label}</a>
     </div>
   </div>
 </section>

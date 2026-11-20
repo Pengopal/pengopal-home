@@ -7,6 +7,8 @@ export interface EnquiryInput {
   timeline: string;
   website: string;
   turnstileToken: string;
+  /** This visit's anonymous analytics id, so the server's contact_sent joins it. Never personal. */
+  visitorId?: string;
 }
 
 export type SubmitResult =
