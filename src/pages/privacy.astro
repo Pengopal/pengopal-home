@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../content/site';
+---
+<Base title="Privacy — Pengopal" description="What pengopal.com, PengOPA and Tenantry collect, and why.">
+  <Header base="/" />
+  <main id="main" class="container prose">
+    <h1>Privacy</h1>
+    <p class="updated">Last updated 20 November 2026</p>
+
+    <p>This page covers pengopal.com and Pengopal's products, PengOPA (opa.pengopal.com) and Tenantry (tenantry.pengopal.com). They are run by Pengopal Technologies. Questions: <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.</p>
+
+    <h2>Usage statistics</h2>
+    <p>We use <a href="https://posthog.com" rel="noopener" target="_blank">PostHog</a>, hosted in the EU, to count visits and see which features people use. It is set up to collect as little as possible:</p>
+    <ul>
+      <li>No cookies and nothing stored in your browser. A visit's id lives only in the open page.</li>
+      <li>Visitors are anonymous. In PengOPA and Tenantry, signed-in people are counted by an internal account id, never by name or email.</li>
+      <li>Page addresses are sent without their query strings, except campaign tags (<code>utm_*</code>), so sign-in codes and invite links are never recorded.</li>
+      <li>Your IP address is used to estimate your country and city.</li>
+      <li>No session recordings and no tracking across other websites. Data is not sold or used for advertising.</li>
+      <li>If your browser sends Do Not Track or Global Privacy Control, no statistics are sent at all.</li>
+    </ul>
+
+    <h2>The contact form</h2>
+    <p>When you send an enquiry, your name, email address, message and timeline are emailed to us so we can reply. Cloudflare Turnstile checks that the sender is not a bot.</p>
+
+    <h2>PengOPA and Tenantry accounts</h2>
+    <p>If you create an account, we keep what the product needs to work: your name, email address and the workspaces, policies and settings you create. You can ask us to delete your account at any time.</p>
+
+    <h2>Your rights</h2>
+    <p>You can ask what we hold about you, have it corrected or deleted, or object to its use, by emailing <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.</p>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .prose { padding-block: var(--space-9); max-width: 68ch; }
+  .prose h2 { margin-top: var(--space-7); }
+  .prose p, .prose li { color: var(--muted); }
+  .prose a { color: var(--text); }
+  .updated { margin-top: 0; }
+</style>
