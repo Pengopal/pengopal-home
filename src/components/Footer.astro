@@ -7,6 +7,7 @@ const year = new Date().getFullYear();
     <p class="footer__copy">{site.brand.copyrightMark} {year} {site.footer.company}</p>
     <ul class="footer__links" role="list">
       <li><a href={`mailto:${site.contact.email}`} data-track="email_clicked" data-track-location="footer">{site.contact.email}</a></li>
+      <li><a href="/privacy">Privacy</a></li>
       <li><a href={site.footer.linkedin} rel="me noopener" target="_blank" data-track="social_clicked" data-track-network="linkedin">{site.footer.linkedinLabel}</a></li>
     </ul>
   </div>
