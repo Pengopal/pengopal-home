@@ -71,5 +71,9 @@ const orgLd = {
   <body>
     <a class="skip-link" href="#main">{site.a11y.skip}</a>
     <slot />
+    <script>
+      import { initAnalytics } from '../scripts/analytics';
+      initAnalytics();
+    </script>
   </body>
 </html>

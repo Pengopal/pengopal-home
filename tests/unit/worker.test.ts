@@ -1,16 +1,19 @@
 import worker from '../../worker/index';
 import { handleContact, type ContactDeps, type MailMessage } from '../../worker/contact';
+import { proxyIngest } from '../../worker/analytics';
 
 const ENV = { CONTACT_TO: 'owner@example.com' };
 const VALID = { name: 'Ada', email: 'ada@example.com', message: 'We need SSO.', timeline: '1–3 months', website: '', turnstileToken: 'tok' };
 
 function fakeDeps(opts: { turnstile?: boolean; mailThrows?: boolean } = {}) {
   const mails: MailMessage[] = [];
+  const events: { event: string; props: Record<string, unknown> }[] = [];
   const deps: ContactDeps = {
+    track(event, props) { events.push({ event, props }); },
     async verifyTurnstile() { return opts.turnstile ?? true; },
     async sendMail(msg) { if (opts.mailThrows) throw new Error('mail down'); mails.push(msg); },
   };
-  return { deps, mails };
+  return { deps, mails, events };
 }
 
 const post = (body: unknown) =>
@@ -27,6 +30,28 @@ test('a valid enquiry sends one email to the owner, with reply-to set to the vis
   expect(f.mails).toHaveLength(1);
   expect(f.mails[0]).toMatchObject({ to: 'owner@example.com', replyTo: 'ada@example.com' });
   expect(f.mails[0].text).toContain('We need SSO.');
+  // Analytics learns that an enquiry arrived and its timeline, never who sent it or what it says.
+  expect(f.events).toEqual([{ event: 'contact_sent', props: { timeline: '1–3 months' } }]);
+});
+
+test('the analytics relay passes on only our own event posts, to PostHog EU', async () => {
+  const env = { POSTHOG_KEY: 'phc_ours' };
+  const sent: string[] = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (url: string) => { sent.push(url); return new Response(null, { status: 200 }); }) as typeof fetch;
+  try {
+    const post = (path: string, body: string, method = 'POST') =>
+      proxyIngest(new Request(`https://pengopal.com/ingest${path}`, method === 'POST' ? { method, body } : { method }), env);
+    expect((await post('/i/v0/e/', '{"api_key":"phc_ours"}')).status).toBe(204);
+    expect((await post('/i/v0/e/', '{"api_key":"phc_someone_else"}')).status).toBe(403);
+    expect((await post('/decide/', '{"api_key":"phc_ours"}')).status).toBe(404);
+    expect((await post('/i/v0/e/', '', 'GET')).status).toBe(404);
+    expect((await post('/i/v0/e/', `{"api_key":"phc_ours","x":"${'a'.repeat(70_000)}"}`)).status).toBe(413);
+    expect((await proxyIngest(new Request('https://pengopal.com/ingest/i/v0/e/', { method: 'POST', body: 'x' }), {})).status).toBe(404);
+    expect(sent).toEqual(['https://eu.i.posthog.com/i/v0/e/']);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 });
 
 test('bad input is rejected and nothing is sent (bad email, header injection, too long)', async () => {

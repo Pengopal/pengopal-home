@@ -15,4 +15,9 @@ export interface Env {
   EMAIL: EmailBinding;
   TURNSTILE_SECRET: string;
   CONTACT_TO: string;
+  /** PostHog project key (public, like the Turnstile site key). Unset: no analytics. */
+  POSTHOG_KEY?: string;
+  /** PostHog ingestion host; defaults to the EU cloud. */
+  POSTHOG_HOST?: string;
 }
+export interface WorkerContext { waitUntil(promise: Promise<unknown>): void }

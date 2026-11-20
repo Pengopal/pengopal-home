@@ -65,6 +65,8 @@ jobs:
       cancel-in-progress: false
     env:
       PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
+      # PostHog's project key is public (it only sends events). Unset: the site sends no analytics.
+      PUBLIC_POSTHOG_KEY: ${{ vars.PUBLIC_POSTHOG_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -94,7 +96,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx wrangler deploy --secrets-file "$RUNNER_TEMP/worker-secrets.json"
+        run: npx wrangler deploy --secrets-file "$RUNNER_TEMP/worker-secrets.json" --var "POSTHOG_KEY:${PUBLIC_POSTHOG_KEY}"
 
       - name: Remove the secrets file
         if: always()

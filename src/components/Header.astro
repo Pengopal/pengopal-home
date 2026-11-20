@@ -14,7 +14,7 @@ import { site } from '../content/site';
           {site.nav.map((item) => <li><a href={`${base}${item.href}`}>{item.label}</a></li>)}
         </ul>
       </nav>
-      <a class="btn btn--primary" href={`${base}${site.hero.primary.href}`}>{site.hero.primary.label}</a>
+      <a class="btn btn--primary" href={`${base}${site.hero.primary.href}`} data-track="cta_clicked" data-track-location="header" data-track-cta="primary">{site.hero.primary.label}</a>
     </div>
     <div class="site-header__tools">
       <ThemeToggle />

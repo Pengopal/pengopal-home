@@ -1,6 +1,7 @@
 import { handleContact } from './contact';
 import { makeDeps } from './deps';
-import type { Env } from './types';
+import { proxyIngest } from './analytics';
+import type { Env, WorkerContext } from './types';
 
 /** The site lives on the apex; www is attached only to send visitors there. */
 const CANONICAL_HOST = 'pengopal.com';
@@ -25,7 +26,7 @@ function withSecurityHeaders(res: Response): Response {
   return out;
 }
 
-async function route(request: Request, env: Env): Promise<Response> {
+async function route(request: Request, env: Env, ctx?: WorkerContext): Promise<Response> {
   const url = new URL(request.url);
   if (url.protocol === 'http:' || url.hostname === `www.${CANONICAL_HOST}`) {
     url.protocol = 'https:';
@@ -34,12 +35,13 @@ async function route(request: Request, env: Env): Promise<Response> {
     url.hash = '';
     return Response.redirect(url.toString(), 301);
   }
-  if (url.pathname === '/api/contact') return handleContact(request, env, makeDeps(env));
+  if (url.pathname === '/api/contact') return handleContact(request, env, makeDeps(env, ctx));
+  if (url.pathname.startsWith('/ingest/')) return proxyIngest(request, env);
   return env.ASSETS.fetch(request);
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    return withSecurityHeaders(await route(request, env));
+  async fetch(request: Request, env: Env, ctx?: WorkerContext): Promise<Response> {
+    return withSecurityHeaders(await route(request, env, ctx));
   },
 };

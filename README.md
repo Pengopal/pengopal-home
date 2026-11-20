@@ -89,6 +89,28 @@ On any failure, the visitor gets a ready-filled email link instead. Without Java
 
 <p align="center"><img src="docs/images/contact-dialog.png" alt="The contact dialog" width="640"> <img src="docs/images/phone.png" alt="The page on a phone" width="180"></p>
 
+### Analytics without cookies
+
+A 1 KB script sends events to PostHog's EU cloud through the Worker (`/ingest`), so there's no third-party script and no consent banner:
+
+- no cookies or storage: a visit's id lives only in the page's memory, and visitors stay anonymous;
+- nothing at all under Do Not Track or Global Privacy Control;
+- addresses without their query string, except `utm_*` tags;
+- the relay passes on only event posts carrying our own project key, at most 64 KB.
+
+| Event | Sent by | When |
+| --- | --- | --- |
+| `$pageview`, `$pageleave` | Page | The page opens and closes |
+| `section_viewed` | Page | Work, Services, How we work or Contact scrolls into view (`section`) |
+| `cta_clicked` | Page | A "Start a project" or secondary hero button (`location`, `cta`) |
+| `project_link_clicked` | Page | A product's demo or code link (`product`, `link`) |
+| `contact_opened` | Page | The contact dialog opens (`from`) |
+| `contact_sent` | Worker | An enquiry is emailed (`timeline` only: never name, email or message) |
+| `contact_failed` | Worker, page | Sending failed (`stage`) |
+| `email_clicked`, `social_clicked` | Page | The email address or LinkedIn link |
+
+Without `PUBLIC_POSTHOG_KEY` (a repository variable for the deploy), nothing is sent.
+
 ## Quality
 
 A small test suite covers what would actually hurt if it broke, and runs on every push:

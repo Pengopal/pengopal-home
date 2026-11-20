@@ -11,6 +11,8 @@ export interface MailMessage {
 export interface ContactDeps {
   verifyTurnstile(token: string, ip: string | null): Promise<boolean>;
   sendMail(msg: MailMessage): Promise<void>;
+  /** Records an analytics event after the response; never personal data. */
+  track?(event: string, properties: Record<string, unknown>, visitorId: unknown): void;
 }
 
 const MAX_BODY_BYTES = 16_384;
@@ -68,7 +70,10 @@ export async function handleContact(request: Request, env: Pick<Env, 'CONTACT_TO
       text: [`Name: ${name}`, `Email: ${email}`, `Timeline: ${timeline || 'Not given'}`, '', 'Message:', message].join('\n'),
     });
   } catch {
+    deps.track?.('contact_failed', { stage: 'mail' }, body.visitorId);
     return reply(502, { ok: false });
   }
+  // Only the timeline: never the name, email or message.
+  deps.track?.('contact_sent', { timeline: timeline || 'Not given' }, body.visitorId);
   return reply(200, { ok: true });
 }
