@@ -46,7 +46,7 @@ export async function capture(env: AnalyticsEnv, event: string, distinctId: stri
         api_key: env.POSTHOG_KEY,
         event,
         distinct_id: distinctId,
-        properties: { ...properties, $lib: 'pengopal-worker', $process_person_profile: false },
+        properties: { ...properties, product: 'pengopal-home', $lib: 'pengopal-worker', $process_person_profile: false },
       }),
     });
   } catch {

@@ -98,12 +98,14 @@ A 1 KB script sends events to PostHog's EU cloud through the Worker (`/ingest`),
 - addresses without their query string, except `utm_*` tags;
 - the relay passes on only event posts carrying our own project key, at most 64 KB.
 
+Every event carries `product: pengopal-home`, so this site's numbers can share one PostHog project with PengOPA and Tenantry.
+
 | Event | Sent by | When |
 | --- | --- | --- |
 | `$pageview`, `$pageleave` | Page | The page opens and closes |
 | `section_viewed` | Page | Work, Services, How we work or Contact scrolls into view (`section`) |
 | `cta_clicked` | Page | A "Start a project" or secondary hero button (`location`, `cta`) |
-| `project_link_clicked` | Page | A product's demo or code link (`product`, `link`) |
+| `project_link_clicked` | Page | A product's demo or code link (`project`, `link`) |
 | `contact_opened` | Page | The contact dialog opens (`from`) |
 | `contact_sent` | Worker | An enquiry is emailed (`timeline` only: never name, email or message) |
 | `contact_failed` | Worker, page | Sending failed (`stage`) |

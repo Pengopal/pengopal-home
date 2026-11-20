@@ -67,7 +67,7 @@ export function track(event: string, props: Props = {}): void {
     event,
     distinct_id: visitorId,
     timestamp: new Date().toISOString(),
-    properties: { ...pageProps(), ...props, $session_id: sessionId, $lib: 'pengopal-web', $process_person_profile: false },
+    properties: { ...pageProps(), ...props, $session_id: sessionId, product: 'pengopal-home', $lib: 'pengopal-web', $process_person_profile: false },
   });
   // text/plain keeps sendBeacon a simple request; the Worker passes it on as it is.
   if (!navigator.sendBeacon?.(ENDPOINT, new Blob([body], { type: 'text/plain' }))) {
