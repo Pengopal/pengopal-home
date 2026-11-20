@@ -28,6 +28,7 @@ async function fillContactForm(page: Page) {
 test('the page loads without errors and fits a phone screen', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => { if (/Content Security Policy/i.test(m.text())) errors.push(m.text()); });
   await page.route('https://challenges.cloudflare.com/**', (r) => r.abort());
   await page.goto('/');
   await expect(page.locator('h1')).toHaveText('Software and AI, built end to end.');
@@ -35,6 +36,8 @@ test('the page loads without errors and fits a phone screen', async ({ page }) =
     await expect(page.locator(`section#work a[href="${demo}"]`)).toBeVisible();
   }
 
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await page.waitForLoadState('networkidle');
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   expect(errors).toEqual([]);

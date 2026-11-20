@@ -3,7 +3,9 @@
   "name": "pengopal-web",
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-10",
-  "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "404-page" },
+  // run_worker_first: every request reaches the Worker, so it can force HTTPS, redirect www
+  // (including "/") and add the security headers to the files it serves.
+  "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "404-page", "run_worker_first": true },
   // Cloudflare creates the DNS records and certificates for these on deploy.
   // www is attached only so the Worker can redirect it to the apex.
   "routes": [
