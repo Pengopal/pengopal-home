@@ -48,7 +48,7 @@ test('a mail failure returns 502 so the page can offer the email link', async ()
   expect((await handleContact(post(VALID), ENV, fakeDeps({ mailThrows: true }).deps)).status).toBe(502);
 });
 
-test('routing: www redirects to the apex, /api/contact reaches the handler, the rest is static', async () => {
+test('routing: HTTPS and the apex are enforced, /api/contact reaches the handler, the rest is static with security headers', async () => {
   const hits: string[] = [];
   const env = {
     ASSETS: { fetch: async (r: Request) => { hits.push(new URL(r.url).pathname); return new Response('asset'); } },
@@ -60,10 +60,17 @@ test('routing: www redirects to the apex, /api/contact reaches the handler, the 
   const www = await worker.fetch(new Request('https://www.pengopal.com/work?x=1'), env);
   expect(www.status).toBe(301);
   expect(www.headers.get('location')).toBe('https://pengopal.com/work?x=1');
+  for (const [from, to] of [['http://pengopal.com/a', 'https://pengopal.com/a'], ['https://www.pengopal.com/', 'https://pengopal.com/'], ['http://pengopal.com:8080/', 'https://pengopal.com/']]) {
+    expect((await worker.fetch(new Request(from), env)).headers.get('location')).toBe(to);
+  }
 
   const api = await worker.fetch(new Request('https://pengopal.com/api/contact', { method: 'POST', body: '{bad' }), env);
   expect(api.status).toBe(400);
 
-  expect(await (await worker.fetch(new Request('https://pengopal.com/'), env)).text()).toBe('asset');
+  const home = await worker.fetch(new Request('https://pengopal.com/'), env);
+  expect(await home.text()).toBe('asset');
+  expect(home.headers.get('strict-transport-security')).toContain('max-age=31536000');
+  expect(home.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
+  expect(home.headers.get('x-content-type-options')).toBe('nosniff');
   expect(hits).toEqual(['/']);
 });
